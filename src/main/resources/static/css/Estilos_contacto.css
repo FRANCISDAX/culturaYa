@@ -246,4 +246,13 @@ footer h1 {
   .hamburguesa {
     display: block;
   }
+
+  .imagen-aside {
+    display: none;
+  }
+
+  .formulario-registro {
+    width: 100%;
+  }
+  
 }
