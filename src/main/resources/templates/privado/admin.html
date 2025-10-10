@@ -6,7 +6,22 @@
     <title>Panel de Administración</title>
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">    
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
+            scroll-margin-top: 80px;
+            margin-top: 80px; 
+        }
+    </style>
 
 </head>
 <body class="bg-light">
@@ -15,8 +30,25 @@
     <div th:replace="~{fragments/adminNavbar :: adminNavbar}"></div>
 
     <!-- Contenido principal -->
-    <div th:replace="~{fragments/adminContent :: adminContent}"></div>
+    <main>
+        <div th:replace="~{fragments/adminContent :: adminContent}"></div>
+    </main>
+    
+    <!-- Footer Admin -->
+    <div th:replace="~{fragments/adminFooter :: adminFooter}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(() => {
+                const target = document.querySelector("main h2") || document.querySelector("main");
+                if (target) {
+                    const top = target.getBoundingClientRect().top + window.scrollY - 20; // pequeño margen
+                    window.scrollTo({ top: top, behavior: "smooth" });
+                }
+            }, 300);
+        });    
+    </script>
+
 </body>
 </html>
