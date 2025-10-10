@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - CULTURA YA!</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/Estilos_contacto.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script defer th:src="@{/js/script.js}"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <div th:replace="~{fragments/header :: header('Inicio')}"></div>
+
+  <!-- Navbar -->
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<article class="registro-contacto">
+  <section class="formulario-registro">
+    <h2>Contacto para Empresas y Marcas</h2>
+    <p>Déjanos tus datos y pronto nos comunicaremos contigo para conversar sobre tu propuesta.</p>
+
+    <form id="formulario">
+      <label for="empresa">Nombre de la empresa o marca:</label>
+      <input type="text" id="empresa" name="empresa" placeholder="Ej: Cultura Creativa S.A." required>
+
+      <label for="contacto">Persona de contacto:</label>
+      <input type="text" id="contacto" name="contacto" placeholder="Ej: Juan Pérez" required>
+
+      <label for="correo">Correo electrónico:</label>
+      <input type="email" id="correo" name="correo" placeholder="correo@empresa.com" required>
+
+      <label for="telefono">Teléfono:</label>
+      <input type="tel" id="telefono" name="telefono" placeholder="+51 999 999 999" required>
+
+      <label for="mensaje">Mensaje:</label>
+      <textarea id="mensaje" name="mensaje" rows="5" placeholder="Cuéntanos tu propuesta..." required></textarea>
+
+      <button type="button" onclick="enviar()">Enviar</button>
+    </form>
+  </section>
+
+  <aside class="imagen-aside">
+    <img th:src="@{/img/contacto.jpeg}" alt="Ilustración cultural">
+  </aside>
+</article>
+
+  <!-- Footer -->
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <!-- Script -->
+  <script th:src="@{/js/script.js}"></script>
+
+</body>
+</html>

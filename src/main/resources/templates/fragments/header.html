@@ -1,0 +1,86 @@
+<div th:fragment="header(title)">
+
+    <style>
+
+        /* Importar Font Awesome */
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+
+        /* ======== Header general ======== */
+        .header {
+            background-color: #7B2FF7;  /* Morado principal */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 40px;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ======== Logo + Título ======== */
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-left h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* ======== Botón de sesión ======== */
+        .user-session .login-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #7B2FF7;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 25px;
+            padding: 8px 18px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .user-session .login-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* ======== Hover ======== */
+        .user-session .login-btn:hover {
+            background: #ece6ff;
+            transform: translateY(-2px);
+        }
+
+        /* ======== Responsive ======== */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .header-left {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <header class="header">
+
+        <div class="header-left">
+            <img th:src="@{/img/logo.png}" alt="Logo" width="60">
+            <h1>Cultura ya!</h1>
+        </div>
+
+        <div class="user-session">
+            <a th:href="@{/privado/admin}" class="login-btn">
+                <i class="fa fa-user-circle"></i> Iniciar Sesión
+            </a>
+        </div>
+
+    </header>
+
+</div>

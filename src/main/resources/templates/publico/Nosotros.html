@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosotros - CULTURA YA!</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/Estilos_nosotros.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script defer th:src="@{/js/script.js}"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <div th:replace="~{fragments/header :: header('Inicio')}"></div>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <article class="nosotros">
+        <h1>Historia</h1>
+        <img th:src="@{/img/historia.jpg}" alt="historia">
+        <p>
+            Esta plataforma nace de más de 15 años de experiencia en gestión cultural universitaria y nacional. Erika Lastra,<br>
+            fundadora del proyecto, lideró iniciativas como el <strong>Pasaporte de Actividades Culturales</strong> en la UPC
+            y <strong>Rutas Culturales</strong> para el MINEDU,<br> logrando acercar la cultura a miles de estudiantes y docentes. <br>
+            Hoy, esta experiencia se transforma en una propuesta digital que busca centralizar la oferta cultural y hacerla
+            más accesible a todo el público.
+        </p>
+    </article>
+
+    <article class="nosotros">
+        <h1>Mision</h1>
+        <img th:src="@{/img/mision.jpg}" alt="vision">
+        <p>
+            Promover la participación activa y significativa del público en las actividades culturales del país, centralizando la oferta cultural en una agenda digital que sea accesible, atractiva e interactiva. Buscamos facilitar el descubrimiento de eventos, espacios y expresiones culturales, impulsando así una conexión más cercana entre las personas y la vida cultural del Perú.
+        </p>
+
+        <h1>Vision</h1>
+        <img th:src="@{/img/vision.jpg}" alt="mision">
+        <p>
+            Aspiramos a convertirnos en la principal agenda digital cultural del Perú, un referente innovador que promueva el acceso democrático a la cultura y fortalezca el vínculo entre las personas y los espacios culturales. Queremos acercar la oferta artística y cultural a un público cada vez más amplio, utilizando herramientas digitales para informar, inspirar y conectar. Nuestra plataforma busca ser un punto de encuentro dinámico, inclusivo y representativo de la diversidad cultural del país, impulsando la participación activa, el descubrimiento de nuevas experiencias y el reconocimiento del valor cultural que nos une.
+        </p>
+
+        <h1>Equipo</h1>
+        <h3>ERIKA LASTRA</h3>
+        <img th:src="@{/img/erika.jpg}" alt="foto" id="erika">
+        <p><strong>Fundadora y Directora</strong></p>
+        <p>
+            Gestora cultural con más de 20 años de experiencia en el sector. <br> Ha creado y liderado proyectos como
+            <em>Pasaporte de Actividades Culturales</em> (UPC) y <em>Rutas Culturales</em> (MINEDU), <br> enfocados en democratizar
+            el acceso a la cultura en el Perú. <br><br>
+            <i>“Creo en una cultura cercana, accesible y viva. Esta plataforma es una extensión de esa visión.”</i>
+
+        </p>
+
+    </article>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Script -->
+    <script th:src="@{/js/script.js}"></script>
+
+</body>
+</html>

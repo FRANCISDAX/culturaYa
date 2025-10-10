@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aliados - CULTURA YA!</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/Estilos_aliados.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script defer th:src="@{/js/script.js}"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <div th:replace="~{fragments/header :: header('Inicio')}"></div>
+
+  <!-- Navbar -->
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<article class="aliados-section">
+  <h2>Nuestros Aliados</h2>
+  
+  <a href="https://www.gob.pe/minedu" target="_blank" style="text-decoration: none; color: inherit;"><div class="aliado">
+    <img th:src="@{/img/ministerio.jpg}" alt="Ministerio de Cultura">
+    <div class="descripcion">
+      <h3>Ministerio de Cultura</h3>
+      <p>Aliado clave en la difusión de actividades culturales a nivel nacional. Nos apoya con recursos y difusión institucional.</p>
+    </div>
+  </div></a>
+
+  <a href="https://www.upc.edu.pe/" target="_blank" style="text-decoration: none; color: inherit;"><div class="aliado">
+    <img th:src="@{/img/upc.jpg}" alt="UPC">
+    <div class="descripcion">
+      <h3>Universidad Peruana de Ciencias Aplicadas (UPC)</h3>
+      <p>Colaboramos con estudiantes y docentes en proyectos culturales, investigaciones y eventos formativos.</p>
+    </div>
+  </div></a>
+
+  <a href="https://subcafae-edu.com.pe/" target="_blank" style="text-decoration: none; color: inherit;"><div class="aliado">
+    <img th:src="@{/img/subcafae.jpg}" alt="Subcafae Educación">
+    <div class="descripcion">
+      <h3>Subcafae Educación</h3>
+      <p>Apoya la formación continua de docentes a través de actividades culturales, talleres y jornadas educativas.</p>
+    </div>
+  </div></a>
+
+  <a href="https://www.gob.pe/bnp" target="_blank" style="text-decoration: none; color: inherit;"><div class="aliado">
+    <img th:src="@{/img/aliado4.jpg}" alt="Biblioteca Nacional del Perú">
+    <div class="descripcion">
+      <h3>Biblioteca Nacional del Perú</h3>
+      <p>Custodia y promueve el patrimonio bibliográfico y documental del país, fomentando la lectura y la investigación cultural.</p>
+    </div>
+  </div></a>
+
+  
+  <a href="https://granteatronacional.pe/" target="_blank" style="text-decoration: none; color: inherit;"><div class="aliado">
+    <img th:src="@{/img/aliado5.jpg}" alt="Gran Teatro Nacional">
+    <div class="descripcion">
+      <h3>Gran Teatro Nacional</h3>
+      <p>Principal escenario cultural del Perú, que impulsa la música, la danza y las artes escénicas para todos los públicos.</p>
+    </div>
+  </div></a>
+
+  
+  <a href="https://es.wikipedia.org/wiki/Museo_de_la_Naci%C3%B3n" style="text-decoration: none; color: inherit;"><div class="aliado">
+    <img th:src="@{/img/aliado6.jpg}" alt="Museo de la Nación">
+    <div class="descripcion">
+      <h3>Museo de la Nación</h3>
+      <p>Preserva y exhibe piezas arqueológicas, históricas y etnográficas que muestran la diversidad cultural del Perú.</p>
+    </div>
+  </div></a>
+
+</article>
+
+  <!-- Footer -->
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <!-- Script -->
+  <script th:src="@{/js/script.js}"></script>
+
+
+</body>
+</html>

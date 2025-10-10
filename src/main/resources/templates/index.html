@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - CULTURA YA!</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/Estilos_inicio.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script defer src="js/script.js"></script>
+ 
+</head>
+<body>
+
+    <!-- Header -->
+    <div th:replace="~{fragments/header :: header('Inicio')}"></div>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <article class="lema">
+        <h1>"Eventos, arte y tradición peruana al alcance de un clic.<br> ¡Bienvenido a Cultura Ya!"</h1>
+        <img th:src="@{img/banner8.jpg}" alt="banner2">
+    </article>
+ 
+    <article class="articulos">
+
+        <h1>Noticias</h1> <br>
+
+        <div th:if="${noticias == null or noticias.isEmpty()}" class="sin-noticias">
+            <p style="text-align: center; font-size: 2rem; color: gray; padding: 20px;">
+                No hay noticias disponibles por el momento. Vuelve más tarde.
+            </p>
+        </div>
+
+        <div class="secciones">
+
+            <div th:if="${noticias != null and !noticias.isEmpty()}" th:each="noticia : ${noticias}" class="noticia">
+                <a th:href="${noticia.enlace}" target="_blank" style="text-decoration: none; color: inherit;">
+                    <img th:src="@{${noticia.imagen}}" th:alt="${noticia.titulo}">
+                    <div class="contenido">
+                        <h3 th:text="${noticia.titulo}">Título</h3>
+                        <p th:text="${noticia.contenido}">Contenido...</p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </article>
+
+    <article class="articulos">
+
+        <h1>Eventos</h1>
+
+        <div th:if="${eventos == null or eventos.isEmpty()}" class="sin-noticias">
+            <p style="text-align: center; font-size: 2rem; color: gray; padding: 20px;">
+                No hay eventos disponibles por el momento. Vuelve más tarde.
+            </p>
+        </div>
+
+        <div class="secciones">
+            
+            <div th:if="${eventos != null and !eventos.isEmpty()}" th:each="evento : ${eventos}" class="evento">
+                <a th:href="${evento.enlace}" target="_blank" style="text-decoration: none; color: inherit;">
+                    <img th:src="${evento.imagen}" th:alt="${evento.titulo}">
+                    <div class="descripcion">
+                        <h3 th:text="${evento.titulo}">Título</h3>
+                        <p th:text="${evento.descripcion}">Descripcion</p>
+                        <p th:text="${evento.lugar}">Lugar</p>
+                        <p th:text="${evento.fecha}">Fecha</p>
+                        <p th:text="${evento.precio}">Precio</p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+    </article>
+
+    <article class="articulos">
+
+        <h1>Servicios</h1>
+
+        <div th:if="${servicios == null or servicios.isEmpty()}" class="sin-noticias">
+            <p style="text-align: center; font-size: 2rem; color: gray; padding: 20px;">
+                No hay servicios disponibles por el momento. Vuelve más tarde.
+            </p>
+        </div>
+
+        <div class="secciones">
+
+            <div th:if="${servicios != null and !servicios.isEmpty()}" th:each="servicio : ${servicios}" class="servicios">
+                <a th:href="${servicio.enlace}" target="_blank" style="text-decoration: none; color: inherit;">
+                    <img th:src="@{${servicio.imagen}}" th:alt="${servicio.titulo}">
+                    <div class="contenido">
+                        <h3 th:text="${servicio.titulo}">Título</h3>
+                        <p th:text="${servicio.contenido}">Contenido...</p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+    </article>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

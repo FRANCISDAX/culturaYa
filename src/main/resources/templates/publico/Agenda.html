@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda - CULTURA YA!</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/Estilos_agenda.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script defer th:src="@{/js/script.js}"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <div th:replace="~{fragments/header :: header('Inicio')}"></div>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+    <article>
+
+        <h1>Agenda cultural</h1>
+
+        <img th:src="@{/img/feria2.jpg}" alt="agenda">
+
+        <h1>Conciertos</h1>
+
+        <div th:if="${conciertos == null or conciertos.isEmpty()}" class="sin-noticias">
+            <p style="text-align: center; font-size: 2rem; color: gray; padding: 20px;">
+                No hay conciertos disponibles por el momento. Vuelve más tarde.
+            </p>
+        </div>
+
+        <div class="secciones">
+
+            <div th:each="concierto : ${conciertos}" class="evento">
+
+                <img th:src="${concierto.imagen}" alt="${concierto.titulo}">
+                <div class="descripcion">
+                    <h3 th:text="${concierto.titulo}">Titulo</h3>
+                    <p th:text="${concierto.lugar}">Lugar</p>
+                    <p th:text="${concierto.fecha}">Fecha</p>
+                    <p th:text="${concierto.precio}">Precio</p> 
+                    <p th:text="${concierto.descripcion}">Descripcion</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <h1>Teatro</h1>
+
+        <div th:if="${teatros == null or teatros.isEmpty()}" class="sin-noticias">
+            <p style="text-align: center; font-size: 2rem; color: gray; padding: 20px;">
+                No hay teatros disponibles por el momento. Vuelve más tarde.
+            </p>
+        </div>
+
+        <div class="secciones">
+
+            <div th:each="teatro : ${teatros}" class="evento">
+
+                <img th:src="${teatro.imagen}" alt="${teatro.titulo}">
+                <div class="descripcion">
+                    <h3 th:text="${teatro.titulo}">Titulo</h3>
+                    <p th:text="${teatro.lugar}">Lugar</p>
+                    <p th:text="${teatro.fecha}">Fecha</p>
+                    <p th:text="${teatro.precio}">Precio</p> 
+                    <p th:text="${teatro.descripcion}">Descripcion</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <h1>Ferias</h1>
+
+        <div th:if="${ferias == null or ferias.isEmpty()}" class="sin-noticias">
+            <p style="text-align: center; font-size: 2rem; color: gray; padding: 20px;">
+                No hay ferias disponibles por el momento. Vuelve más tarde.
+            </p>
+        </div>
+
+        <div class="secciones">
+
+            <div th:each="feria : ${ferias}" class="evento">
+
+                <img th:src="${feria.imagen}" alt="${teatro.titulo}">
+                <div class="descripcion">
+                    <h3 th:text="${feria.titulo}">Titulo</h3>
+                    <p th:text="${feria.lugar}">Lugar</p>
+                    <p th:text="${feria.fecha}">Fecha</p>
+                    <p th:text="${feria.precio}">Precio</p> 
+                    <p th:text="${feria.descripcion}">Descripcion</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </article>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Script -->
+    <script th:src="@{/js/script.js}"></script>
+
+</body>
+</html>
