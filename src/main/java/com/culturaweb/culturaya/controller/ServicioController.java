@@ -1,9 +1,6 @@
 package com.culturaweb.culturaya.controller;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.culturaweb.culturaya.model.entity.Servicio;
 import com.culturaweb.culturaya.service.ServicioService;
+import com.culturaweb.culturaya.service.CloudinaryService;
 
 import jakarta.validation.Valid;
 
@@ -26,6 +24,9 @@ public class ServicioController {
 
     @Autowired
     ServicioService servicioService;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @GetMapping("/admin/servicios")
     public String listar(Model model) {
@@ -54,26 +55,20 @@ public class ServicioController {
         }
 
         try {
-            // Ruta donde se guardarán las imágenes
-            String uploadDir = "img_cultura/";
-
-            // Validar si hay imagen subida
-            if (!imagenFile.isEmpty()) {
-                String fileName = imagenFile.getOriginalFilename();
-
-                // Guardar el archivo físicamente
-                java.nio.file.Path path = java.nio.file.Paths.get(uploadDir + fileName);
-                java.nio.file.Files.createDirectories(path.getParent()); // Crea la carpeta si no existe
-                java.nio.file.Files.copy(imagenFile.getInputStream(), path, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-
-                // Asignar la ruta pública al objeto
-                servicio.setImagen("/img/" + fileName);
-            } else {
+            // Validar si hay imágen subida.
+            if (imagenFile == null || imagenFile.isEmpty()) {
                 attr.addFlashAttribute("error", "Debe seleccionar una imagen.");
-                return "redirect:/admin/serviios/nueva";
+                return "redirect:/admin/servicios/nueva";
             }
 
-            // Guardar en BD
+            // Subir imagen a Cloudinary.
+            Map<String, Object> uploadResult = cloudinaryService.uploadFile(imagenFile);
+
+            // Guardar la URL y el public_id.
+            servicio.setImagen((String) uploadResult.get("secure_url"));
+            servicio.setImagenPublicId((String) uploadResult.get("public_id"));
+
+            // Guardar en la Base de Datos.
             servicioService.guardar(servicio);
             attr.addFlashAttribute("exito", "Servicio registrado correctamente.");
 
@@ -113,37 +108,30 @@ public class ServicioController {
         }
 
         try {
-            String uploadDir = "img_cultura/";
-
-            // 🔹 Obtener la noticia existente de BD
+            // Obtener el servicio existente de BD.
             Servicio servicioExistente = servicioService.obtenerPorId(servicio.getId());
             if (servicioExistente == null) {
                 attr.addFlashAttribute("error", "El servicio no existe o fue eliminada.");
                 return "redirect:/admin/servicios";
             }
 
-            // 🔹 Actualizar los campos editables
+            // Actualizar los campos editables
             servicioExistente.setTitulo(servicio.getTitulo());
             servicioExistente.setContenido(servicio.getContenido());
             servicioExistente.setEnlace(servicio.getEnlace());
 
             if (!imagenFile.isEmpty()) {
-                // Eliminar la imagen anterior del disco (opcional)
-                if (servicioExistente.getImagen() != null) {
-                    Path rutaVieja = Paths.get("src/main/resources/static" + servicioExistente.getImagen());
-                    Files.deleteIfExists(rutaVieja);
+                if (servicioExistente.getImagenPublicId() != null) {
+                    cloudinaryService.deleteFile(servicioExistente.getImagenPublicId());
                 }
 
-                // Guardar la nueva imagen
-                String fileName = imagenFile.getOriginalFilename();
-                Path nuevaRuta = Paths.get(uploadDir + fileName);
-                Files.createDirectories(nuevaRuta.getParent());
-                Files.copy(imagenFile.getInputStream(), nuevaRuta, StandardCopyOption.REPLACE_EXISTING);
+                Map<String, Object> uploadResult = cloudinaryService.uploadFile(imagenFile);
 
-                servicioExistente.setImagen("/img/" + fileName);
+                servicioExistente.setImagen((String) uploadResult.get("secure_url"));
+                servicioExistente.setImagenPublicId((String) uploadResult.get("public_id"));
             }
 
-            // 🔹 Guardar los cambios (actualizar)
+            // Guardar los cambios (actualizar).
             servicioService.guardar(servicioExistente);
             attr.addFlashAttribute("exito", "Servicio actualizado correctamente.");
 
@@ -158,8 +146,25 @@ public class ServicioController {
     @GetMapping("/admin/servicios/eliminar")
     public String eliminar(@RequestParam("id") Long id, RedirectAttributes attr) {
         try {
+            // Buscar el Servicio.
+            Servicio servicio = servicioService.obtenerPorId(id);
+            if (servicio == null) {
+                attr.addFlashAttribute("error", "El servicio no existe o ya fue eliminado.");
+                return "redirect:/admin/servicios";
+            }
+            // Eliminar la imágen asociada en Cloudinary (si existe).
+            if (servicio.getImagenPublicId() != null && !servicio.getImagenPublicId().isEmpty()) {
+                try {
+                    cloudinaryService.deleteFile(servicio.getImagenPublicId());
+                    System.out.println("✅ Imagen eliminada de Cloudinary: " + servicio.getImagenPublicId());
+                } catch (Exception e) {
+                    System.out.println("⚠️ No se pudo eliminar la imagen en Cloudinary: " + e.getMessage());
+                }
+            }
+            // Eliminar el registro de la Base de Datos.
             servicioService.eliminarServicio(id);
             attr.addFlashAttribute("exito", "Servicio eliminado correctamente.");
+
         } catch (Exception e) {
             e.printStackTrace();
             attr.addFlashAttribute("error", "No se pudo eliminar el servicio: " + e.getMessage());

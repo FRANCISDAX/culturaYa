@@ -1,6 +1,6 @@
 package com.culturaweb.culturaya.controller;
 
-import java.nio.file.*;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.culturaweb.culturaya.model.entity.Noticia;
+import com.culturaweb.culturaya.service.CloudinaryService;
 import com.culturaweb.culturaya.service.NoticiaService;
 
 import jakarta.validation.Valid;
@@ -24,6 +25,9 @@ public class NoticiaController {
     @Autowired
     NoticiaService noticiaService;
     
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
     @GetMapping("/admin/noticias")
     public String listar(Model model) {
         model.addAttribute("noticias", noticiaService.listarNoticias());
@@ -51,28 +55,22 @@ public class NoticiaController {
         }
 
         try {
-            // Ruta donde se guardarán las imágenes
-            String uploadDir = "img_cultura/";
-
-            // Validar si hay imagen subida
-            if (!imagenFile.isEmpty()) {
-                String fileName = imagenFile.getOriginalFilename();
-
-                // Guardar el archivo físicamente
-                java.nio.file.Path path = java.nio.file.Paths.get(uploadDir + fileName);
-                java.nio.file.Files.createDirectories(path.getParent()); // Crea la carpeta si no existe
-                java.nio.file.Files.copy(imagenFile.getInputStream(), path, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-
-                // Asignar la ruta pública al objeto
-                noticia.setImagen("/img/" + fileName);
-            } else {
+            // Validar si hay imágen subida.
+            if (imagenFile == null || imagenFile.isEmpty()) {
                 attr.addFlashAttribute("error", "Debe seleccionar una imagen.");
                 return "redirect:/admin/noticias/nueva";
             }
 
-            // Guardar en BD
+            // Subir imagen a Cloudinary.
+            Map<String, Object> uploadResult = cloudinaryService.uploadFile(imagenFile);
+
+            // Guardar la URL y el public_id.
+            noticia.setImagen((String) uploadResult.get("secure_url"));
+            noticia.setImagenPublicId((String) uploadResult.get("public_id"));
+
+            // Guardar en la Base de Datos.
             noticiaService.guardar(noticia);
-            attr.addFlashAttribute("exito", "Noticia registrada correctamente.");
+            attr.addFlashAttribute("exito", "Noticia registrado correctamente.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,37 +108,30 @@ public class NoticiaController {
         }
 
         try {
-            String uploadDir = "img_cultura/";
-
-            // 🔹 Obtener la noticia existente de BD
+            // Obtener la noticia existente de BD.
             Noticia noticiaExistente = noticiaService.obtenerPorId(noticia.getId());
             if (noticiaExistente == null) {
                 attr.addFlashAttribute("error", "La noticia no existe o fue eliminada.");
                 return "redirect:/admin/noticias";
             }
 
-            // 🔹 Actualizar los campos editables
+            // Actualizar los campos editables
             noticiaExistente.setTitulo(noticia.getTitulo());
             noticiaExistente.setContenido(noticia.getContenido());
             noticiaExistente.setEnlace(noticia.getEnlace());
 
             if (!imagenFile.isEmpty()) {
-                // Eliminar la imagen anterior del disco (opcional)
-                if (noticiaExistente.getImagen() != null) {
-                    Path rutaVieja = Paths.get("src/main/resources/static" + noticiaExistente.getImagen());
-                    Files.deleteIfExists(rutaVieja);
+                if (noticiaExistente.getImagenPublicId() != null) {
+                    cloudinaryService.deleteFile(noticiaExistente.getImagenPublicId());
                 }
 
-                // Guardar la nueva imagen
-                String fileName = imagenFile.getOriginalFilename();
-                Path nuevaRuta = Paths.get(uploadDir + fileName);
-                Files.createDirectories(nuevaRuta.getParent());
-                Files.copy(imagenFile.getInputStream(), nuevaRuta, StandardCopyOption.REPLACE_EXISTING);
+                Map<String, Object> uploadResult = cloudinaryService.uploadFile(imagenFile);
 
-                noticiaExistente.setImagen("/img/" + fileName);
+                noticiaExistente.setImagen((String) uploadResult.get("secure_url"));
+                noticiaExistente.setImagenPublicId((String) uploadResult.get("public_id"));
             }
 
-            // 🔹 Guardar los cambios (actualizar)
+            // Guardar los cambios (actualizar)
             noticiaService.guardar(noticiaExistente);
             attr.addFlashAttribute("exito", "Noticia actualizada correctamente.");
 
@@ -155,8 +146,25 @@ public class NoticiaController {
     @GetMapping("/admin/noticias/eliminar")
     public String eliminar(@RequestParam("id") Long id, RedirectAttributes attr) {
         try {
+            // Buscar la Noticia.
+            Noticia noticia = noticiaService.obtenerPorId(id);
+            if (noticia == null) {
+                attr.addFlashAttribute("error", "La noticia no existe o ya fue eliminado.");
+                return "redirect:/admin/noticias";
+            }
+            // Eliminar la imágen asociada en Cloudinary (si existe).
+            if (noticia.getImagenPublicId() != null && !noticia.getImagenPublicId().isEmpty()) {
+                try {
+                    cloudinaryService.deleteFile(noticia.getImagenPublicId());
+                    System.out.println("✅ Imagen eliminada de Cloudinary: " + noticia.getImagenPublicId());
+                } catch (Exception e) {
+                    System.out.println("⚠️ No se pudo eliminar la imagen en Cloudinary: " + e.getMessage());
+                }
+            }
+            // Eliminar el registro de la Base de Datos.
             noticiaService.eliminarNoticia(id);
-            attr.addFlashAttribute("exito", "Noticia eliminada correctamente.");
+            attr.addFlashAttribute("exito", "Noticia eliminado correctamente.");  
+
         } catch (Exception e) {
             e.printStackTrace();
             attr.addFlashAttribute("error", "No se pudo eliminar la noticia: " + e.getMessage());

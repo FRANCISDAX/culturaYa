@@ -1,10 +1,7 @@
 package com.culturaweb.culturaya.controller;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.culturaweb.culturaya.model.entity.Actividad;
 import com.culturaweb.culturaya.model.enums.Categoria;
 import com.culturaweb.culturaya.service.ActividadService;
+import com.culturaweb.culturaya.service.CloudinaryService;
 
 import jakarta.validation.Valid;
 
@@ -28,6 +26,9 @@ public class ActividadController {
 
     @Autowired
     ActividadService actividadService;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @GetMapping("/admin/actividades")
     public String listar(@RequestParam(required = false) String categoria, 
@@ -63,27 +64,21 @@ public class ActividadController {
             return "redirect:/admin/actividades/nueva";
         }
 
-        try {
-            // Ruta donde se guardarán las imágenes
-            String uploadDir = "img_cultura/";
-
-            // Validar si hay imagen subida
-            if (!imagenFile.isEmpty()) {
-                String fileName = imagenFile.getOriginalFilename();
-
-                // Guardar el archivo físicamente
-                java.nio.file.Path path = java.nio.file.Paths.get(uploadDir + fileName);
-                java.nio.file.Files.createDirectories(path.getParent()); // Crea la carpeta si no existe
-                java.nio.file.Files.copy(imagenFile.getInputStream(), path, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-
-                // Asignar la ruta pública al objeto
-                actividad.setImagen("/img/" + fileName);
-            } else {
+        try { 
+            // Validar si hay imágen subida.
+            if (imagenFile == null || imagenFile.isEmpty()) {
                 attr.addFlashAttribute("error", "Debe seleccionar una imagen.");
                 return "redirect:/admin/actividades/nueva";
             }
 
-            // Guardar en BD
+            // Subir imagen a Cloudinary.
+            Map<String, Object> uploadResult = cloudinaryService.uploadFile(imagenFile);
+
+            // Guardar la URL y el public_id.
+            actividad.setImagen((String) uploadResult.get("secure_url"));
+            actividad.setImagenPublicId((String) uploadResult.get("public_id"));
+
+            // Guardar en la Base de Datos.
             actividadService.guardar(actividad);
             attr.addFlashAttribute("exito", "Actividad registrada correctamente.");
 
@@ -123,34 +118,27 @@ public class ActividadController {
         }
 
         try {
-            String uploadDir = "img_cultura/";
-
-            // 🔹 Obtener la noticia existente de BD
+            // Obtener el servicio existente de BD.
             Actividad actividadExistente = actividadService.obtenerPorId(actividad.getId());
             if (actividadExistente == null) {
                 attr.addFlashAttribute("error", "La actividad no existe o fue eliminada.");
                 return "redirect:/admin/actividades";
             }
 
-            // 🔹 Actualizar los campos editables
+            // Actualizar los campos editables.
             actividadExistente.setTitulo(actividad.getTitulo());
             actividadExistente.setDescripcion(actividad.getDescripcion());
             actividadExistente.setEnlace(actividad.getEnlace());
 
             if (!imagenFile.isEmpty()) {
-                // Eliminar la imagen anterior del disco (opcional)
-                if (actividadExistente.getImagen() != null) {
-                    Path rutaVieja = Paths.get("src/main/resources/static" + actividadExistente.getImagen());
-                    Files.deleteIfExists(rutaVieja);
+                if (actividadExistente.getImagenPublicId() != null) {
+                    cloudinaryService.deleteFile(actividadExistente.getImagenPublicId());
                 }
 
-                // Guardar la nueva imagen
-                String fileName = imagenFile.getOriginalFilename();
-                Path nuevaRuta = Paths.get(uploadDir + fileName);
-                Files.createDirectories(nuevaRuta.getParent());
-                Files.copy(imagenFile.getInputStream(), nuevaRuta, StandardCopyOption.REPLACE_EXISTING);
+                Map<String, Object> uploadResult = cloudinaryService.uploadFile(imagenFile);
 
-                actividadExistente.setImagen("/img/" + fileName);
+                actividadExistente.setImagen((String) uploadResult.get("secure_url"));
+                actividadExistente.setImagenPublicId((String) uploadResult.get("public_id"));
             }
 
             // 🔹 Guardar los cambios (actualizar)
@@ -168,8 +156,24 @@ public class ActividadController {
     @GetMapping("/admin/actividades/eliminar")
     public String eliminar(@RequestParam("id") Long id, RedirectAttributes attr) {
         try {
+            // Buscar la Actividad.
+            Actividad actividad = actividadService.obtenerPorId(id);
+            if (actividad == null) {
+                attr.addFlashAttribute("error", "La actividad no existe o ya fue eliminado.");
+                return "redirect:/admin/actividades";
+            }
+            // Eliminar la imágen asociada en Cloudinary (si existe).
+            if (actividad.getImagenPublicId() != null && !actividad.getImagenPublicId().isEmpty()) {
+                try {
+                    cloudinaryService.deleteFile(actividad.getImagenPublicId());
+                    System.out.println("✅ Imagen eliminada de Cloudinary: " + actividad.getImagenPublicId());
+                } catch (Exception e) {
+                    System.out.println("⚠️ No se pudo eliminar la imagen en Cloudinary: " + e.getMessage());
+                }
+            }
+            // Eliminar el registro de la Base de Datos.
             actividadService.eliminarActividad(id);
-            attr.addFlashAttribute("exito", "Actividad eliminada correctamente.");
+            attr.addFlashAttribute("exito", "Actividad eliminado correctamente.");
         } catch (Exception e) {
             e.printStackTrace();
             attr.addFlashAttribute("error", "No se pudo eliminar la actividad: " + e.getMessage());
