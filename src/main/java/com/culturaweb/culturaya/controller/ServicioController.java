@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -20,6 +21,7 @@ import com.culturaweb.culturaya.service.CloudinaryService;
 import jakarta.validation.Valid;
 
 @Controller
+@RequestMapping("/admin/servicios")
 public class ServicioController {
 
     @Autowired
@@ -28,19 +30,15 @@ public class ServicioController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    @GetMapping("/admin/servicios")
+    @GetMapping
     public String listar(Model model) {
         model.addAttribute("servicios",servicioService.listarServicios()); 
-        return "privado/servicios/lista";
-    }
-
-    @GetMapping("/admin/servicios/nueva")
-    public String nueva(Model model) {
         model.addAttribute("servicio", new Servicio());
-        return "privado/servicios/nueva";
+        model.addAttribute("vista", "adminServicios");
+        return "privado/layout_admin";
     }
 
-    @PostMapping("/admin/servicios/guardar")
+    @PostMapping("/guardar")
     public String guardar(
         @Valid Servicio servicio,
         BindingResult result,
@@ -51,14 +49,14 @@ public class ServicioController {
             result.getAllErrors().forEach(err -> System.out.println("Error: " + err.getDefaultMessage()));
             attr.addFlashAttribute("org.springframework.validation.BindingResult.noticia", result);
             attr.addFlashAttribute("servicio", servicio);
-            return "redirect:/admin/servicios/nueva";
+            return "redirect:/admin/servicios";
         }
 
         try {
             // Validar si hay imágen subida.
             if (imagenFile == null || imagenFile.isEmpty()) {
                 attr.addFlashAttribute("error", "Debe seleccionar una imagen.");
-                return "redirect:/admin/servicios/nueva";
+                return "redirect:/admin/servicios";
             }
 
             // Subir imagen a Cloudinary.
@@ -81,7 +79,7 @@ public class ServicioController {
 
     }
 
-    @GetMapping("/admin/servicios/editar/{id}")
+    @GetMapping("/editar/{id}")
     public String editar(@PathVariable Long id, Model model, RedirectAttributes attr) {
         Servicio servicio = servicioService.obtenerPorId(id);
 
@@ -90,11 +88,13 @@ public class ServicioController {
             return "redirect:/admin/servicios";
         }
 
-        model.addAttribute("servicio", servicio);
-        return "privado/servicios/editar";
+        model.addAttribute("servicios", servicioService.listarServicios());
+        model.addAttribute("servicioEditar", servicio);
+        model.addAttribute("vista", "adminServicios");
+        return "privado/layout_admin";
     }
 
-    @PostMapping("/admin/servicios/actualizar")
+    @PostMapping("/actualizar")
     public String actualizar(
             @Valid Servicio servicio,
             BindingResult result,
@@ -104,7 +104,7 @@ public class ServicioController {
         if (result.hasErrors()) {
             attr.addFlashAttribute("org.springframework.validation.BindingResult.noticia", result);
             attr.addFlashAttribute("servicio", servicio);
-            return "redirect:/admin/servicios/editar/" + servicio.getId();
+            return "redirect:/admin/servicios";
         }
 
         try {
@@ -143,7 +143,7 @@ public class ServicioController {
         return "redirect:/admin/servicios";
     }
     
-    @GetMapping("/admin/servicios/eliminar")
+    @GetMapping("/admins/servicios/eliminar")
     public String eliminar(@RequestParam("id") Long id, RedirectAttributes attr) {
         try {
             // Buscar el Servicio.

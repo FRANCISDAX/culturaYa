@@ -1,0 +1,71 @@
+<div th:fragment="adminSidebar">
+    <aside class="sidebar">
+        <!-- Botón cerrar para móvil -->
+        <div class="d-block d-md-none text-end p-3 border-bottom">
+            <button class="btn btn-sm btn-outline-secondary" onclick="toggleMobileSidebar()">
+                <i class="bi bi-x-lg"></i> Cerrar
+            </button>
+        </div>
+        
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+                <h6 class="sidebar-title">DSI-Elitec</h6>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${vista == 'adminDashboard'} ? 'active'" th:href="@{/admin/dashboard}" onclick="handleNavClick()">
+                        <i class="bi bi-speedometer2"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${vista == 'adminNoticias'} ? 'active'" th:href="@{/admin/noticias}" onclick="handleNavClick()">
+                        <i class="bi bi-newspaper"></i>
+                        <span class="nav-text">Noticias</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${vista == 'adminActividades'} ? 'active'" th:href="@{/admin/actividades}" onclick="handleNavClick()">
+                        <i class="bi bi-calendar-event"></i>
+                        <span class="nav-text">Actividades</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${vista == 'adminServicios'} ? 'active'" th:href="@{/admin/servicios}" onclick="handleNavClick()">
+                        <i class="bi bi-gear"></i>
+                        <span class="nav-text">Servicios</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${vista == 'adminUsuarios'} ? 'active'" th:href="@{/admin/usuarios}" onclick="handleNavClick()">
+                        <i class="bi bi-people"></i>
+                        <span class="nav-text">Usuarios</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-header mt-4">
+                <h6 class="sidebar-title">Configuración</h6>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/perfil}" onclick="handleNavClick()">
+                        <i class="bi bi-person-circle"></i>
+                        <span class="nav-text">Perfil</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/" onclick="handleNavClick()">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="nav-text">Cerrar Sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+    
+    <!-- Botón flotante para abrir sidebar en móvil -->
+    <button class="menu-toggle-mobile d-md-none" onclick="toggleMobileSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+</div>

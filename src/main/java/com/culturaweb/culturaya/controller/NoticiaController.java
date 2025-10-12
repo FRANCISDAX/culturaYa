@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -20,6 +21,7 @@ import com.culturaweb.culturaya.service.NoticiaService;
 import jakarta.validation.Valid;
 
 @Controller
+@RequestMapping("/admin/noticias")
 public class NoticiaController {
 
     @Autowired
@@ -28,19 +30,15 @@ public class NoticiaController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    @GetMapping("/admin/noticias")
+    @GetMapping
     public String listar(Model model) {
         model.addAttribute("noticias", noticiaService.listarNoticias());
-        return "privado/noticias/lista";
+        model.addAttribute("noticia", new Noticia()); 
+        model.addAttribute("vista", "adminNoticias"); 
+        return "privado/layout_admin";
     }
 
-    @GetMapping("/admin/noticias/nueva")
-    public String nueva(Model model) {
-        model.addAttribute("noticia", new Noticia());
-        return "privado/noticias/nueva";
-    }
-
-    @PostMapping("/admin/noticias/guardar")
+    @PostMapping("/guardar")
     public String guardar(
         @Valid Noticia noticia,
         BindingResult result,
@@ -51,14 +49,14 @@ public class NoticiaController {
             result.getAllErrors().forEach(err -> System.out.println("Error: " + err.getDefaultMessage()));
             attr.addFlashAttribute("org.springframework.validation.BindingResult.noticia", result);
             attr.addFlashAttribute("noticia", noticia);
-            return "redirect:/admin/noticias/nueva";
+            return "redirect:/admin/noticias";
         }
 
         try {
             // Validar si hay imágen subida.
             if (imagenFile == null || imagenFile.isEmpty()) {
                 attr.addFlashAttribute("error", "Debe seleccionar una imagen.");
-                return "redirect:/admin/noticias/nueva";
+                return "redirect:/admin/noticias";
             }
 
             // Subir imagen a Cloudinary.
@@ -81,7 +79,7 @@ public class NoticiaController {
 
     }
 
-    @GetMapping("/admin/noticias/editar/{id}")
+    @GetMapping("/editar/{id}")
     public String editar(@PathVariable Long id, Model model, RedirectAttributes attr) {
         Noticia noticia = noticiaService.obtenerPorId(id);
 
@@ -90,11 +88,13 @@ public class NoticiaController {
             return "redirect:/admin/noticias";
         }
 
-        model.addAttribute("noticia", noticia);
-        return "privado/noticias/editar";
+        model.addAttribute("noticias", noticiaService.listarNoticias());
+        model.addAttribute("noticiaEditar", noticia);
+        model.addAttribute("vista", "adminNoticias");
+        return "privado/layout_admin";
     }
 
-    @PostMapping("/admin/noticias/actualizar")
+    @PostMapping("/actualizar")
     public String actualizar(
             @Valid Noticia noticia,
             BindingResult result,
@@ -104,7 +104,7 @@ public class NoticiaController {
         if (result.hasErrors()) {
             attr.addFlashAttribute("org.springframework.validation.BindingResult.noticia", result);
             attr.addFlashAttribute("noticia", noticia);
-            return "redirect:/admin/noticias/editar/" + noticia.getId();
+            return "redirect:/admin/noticias";
         }
 
         try {
@@ -143,7 +143,7 @@ public class NoticiaController {
         return "redirect:/admin/noticias";
     }
     
-    @GetMapping("/admin/noticias/eliminar")
+    @GetMapping("/eliminar")
     public String eliminar(@RequestParam("id") Long id, RedirectAttributes attr) {
         try {
             // Buscar la Noticia.

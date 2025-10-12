@@ -26,9 +26,4 @@ public class PublicoController {
         return "publico/Contacto";
     }
 
-    @GetMapping("/privado/admin")
-    public String admin() {
-        return "privado/admin";
-    }
-
 }

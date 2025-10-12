@@ -1,0 +1,81 @@
+<div th:fragment="adminActividades">
+    <!-- Encabezado de página -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Actividades</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Inicio</a></li>
+                    <li class="breadcrumb-item active">Actividades</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a th:href="@{/admin/actividades/nueva}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>
+                Nueva Actividad
+            </a>
+        </div>
+    </div>
+    
+    <main class="container">
+        <!-- Mensaje si no hay actividades -->
+        <div th:if="${#lists.isEmpty(actividades)}" class="alert alert-info text-center" role="alert">
+            No hay actividades registradas.
+        </div>
+
+                <!-- Listado de noticias -->
+        <div th:unless="${#lists.isEmpty(actividades)}" class="row g-4">
+            <div th:each="actividad : ${actividades}" class="col-12">
+                <div class="card shadow-sm h-100">
+                    <div class="row g-0">
+                        <!-- Imagen -->
+                        <div class="col-md-3">
+                            <img th:src="${actividad.imagen}" 
+                                 class="img-fluid rounded-start h-100 object-fit-cover" 
+                                 alt="Imagen de la actividad"
+                                 style="object-fit: cover; height: 128px;">
+                        </div>
+
+                        <!-- Contenido -->
+                        <div class="col-md-9">
+                            <div class="card-body d-flex flex-column h-100">
+                                <h5 class="card-title" th:text="${actividad.titulo}">Título</h5>
+                                <p class="card-text text-muted" 
+                                   th:text="${#strings.abbreviate(actividad.descripcion, 200)}">Contenido...</p>
+                                <a th:href="${actividad.enlace}" target="_blank" 
+                                   class="btn btn-outline-primary btn-sm mt-auto align-self-start">
+                                    Ver más →
+                                </a>
+
+                                <!-- Fecha -->
+                                <small class="text-muted mt-2">
+                                    Publicado: 
+                                    <span th:text="${#temporals.format(actividad.fechaPublicacion, 'dd/MM/yyyy HH:mm')}">01/01/2024</span>
+                                    <span th:if="${actividad.fechaActualizacion != null}">
+                                        | Actualizado: 
+                                        <span th:text="${#temporals.format(actividad.fechaActualizacion, 'dd/MM/yyyy HH:mm')}">01/01/2024</span>
+                                    </span>
+                                </small>
+
+                                <!-- Botones de acción -->
+                                <div class="mt-2">
+                                    <a th:href="@{/admin/actividades/editar/{id}(id=${actividad.id})}" 
+                                        class="btn btn-warning btn-sm me-2" style="width: 120px;">Editar</a>
+                                    <a th:href="@{/admin/actividades/eliminar(id=${actividad.id})}" 
+                                        class="btn btn-danger btn-sm"
+                                        style="width: 120px;"
+                                        onclick="return confirm('¿Eliminar esta actividad?')">
+                                        Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</div>

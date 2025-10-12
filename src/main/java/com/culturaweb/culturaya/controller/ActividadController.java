@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -22,6 +23,7 @@ import com.culturaweb.culturaya.service.CloudinaryService;
 import jakarta.validation.Valid;
 
 @Controller
+@RequestMapping("/admin/actividades")
 public class ActividadController {
 
     @Autowired
@@ -30,7 +32,7 @@ public class ActividadController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    @GetMapping("/admin/actividades")
+    @GetMapping
     public String listar(@RequestParam(required = false) String categoria, 
         Model model) {
         
@@ -40,17 +42,19 @@ public class ActividadController {
 
         model.addAttribute("actividades", actividades);
         model.addAttribute("categoriaSeleccionada", categoria);
-        return "privado/actividades/lista";
+        model.addAttribute("vista", "adminActividades");
+        return "privado/layout_admin";
     }
 
-    @GetMapping("/admin/actividades/nueva")
+    @GetMapping("/nueva")
     public String nueva(Model model) {
         model.addAttribute("categorias", Categoria.values());
         model.addAttribute("actividades", new Actividad());
-        return "privado/actividades/nueva";
+        model.addAttribute("vista", "adminActividades");
+        return "privado/layout_admin";
     }
 
-    @PostMapping("/admin/actividades/guardar")
+    @PostMapping("/admins/actividades/guardar")
     public String guardar(
         @Valid Actividad actividad,
         BindingResult result,
@@ -91,7 +95,7 @@ public class ActividadController {
 
     }
 
-    @GetMapping("/admin/actividades/editar/{id}")
+    @GetMapping("/admins/actividades/editar/{id}")
     public String editar(@PathVariable Long id, Model model, RedirectAttributes attr) {
         Actividad actividad = actividadService.obtenerPorId(id);
 
@@ -104,7 +108,7 @@ public class ActividadController {
         return "privado/actividades/editar";
     }
 
-    @PostMapping("/admin/actividades/actualizar")
+    @PostMapping("/admins/actividades/actualizar")
     public String actualizar(
             @Valid Actividad actividad,
             BindingResult result,
@@ -153,7 +157,7 @@ public class ActividadController {
         return "redirect:/admin/actividades";
     }
     
-    @GetMapping("/admin/actividades/eliminar")
+    @GetMapping("/admins/actividades/eliminar")
     public String eliminar(@RequestParam("id") Long id, RedirectAttributes attr) {
         try {
             // Buscar la Actividad.
@@ -182,6 +186,5 @@ public class ActividadController {
         return "redirect:/admin/actividades";
 
     }
-
 
 }
