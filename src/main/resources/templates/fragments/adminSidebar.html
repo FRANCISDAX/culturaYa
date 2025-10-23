@@ -8,7 +8,7 @@
         </div>
         
         <div class="sidebar-content">
-            <div class="sidebar-header">
+            <div class="sidebar-header text-center">
                 <h6 class="sidebar-title">DSI-Elitec</h6>
             </div>
             <ul class="nav flex-column">
@@ -43,11 +43,16 @@
                     </a>
                 </li>
             </ul>
-            
             <div class="sidebar-header mt-4">
                 <h6 class="sidebar-title">Configuración</h6>
             </div>
             <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${vista == 'adminImagenes'} ? 'active'" th:href="@{/admin/imagenes}" onclick="handleNavClick()">
+                        <i class="bi bi-images"></i>
+                        <span class="nav-text">Imágenes</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/admin/perfil}" onclick="handleNavClick()">
                         <i class="bi bi-person-circle"></i>

@@ -1,0 +1,411 @@
+<div th:fragment="adminImagenes">
+    <!-- Encabezado de página -->
+    <div class="page-header">
+
+        <div>
+            <h1 class="page-title">Imagenes</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Inicio</a></li>
+                    <li class="breadcrumb-item active">Imaganes</li>
+                </ol>
+            </nav>
+        </div>
+
+    </div>
+    <!-- Contenido específico de Noticias -->
+<main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">Gestión de Imágenes del Sitio</h1>
+            </div>
+
+            <!-- Mensajes -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Grid de Imágenes -->
+            <div class="row">
+                <div th:each="image : ${images}" class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <!-- Imagen Preview -->
+                            <div class="text-center mb-3">
+                                <th:block th:if="${image.imageUrl}">
+                                    <img th:src="${image.imageUrl}" 
+                                         th:alt="${image.displayName}"
+                                         class="img-fluid rounded"
+                                         style="max-height: 150px; object-fit: cover;">
+                                </th:block>
+                                <th:block th:unless="${image.imageUrl}">
+                                    <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                         style="height: 150px;">
+                                        <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                    </div>
+                                </th:block>
+                            </div>
+                            
+                            <!-- Información -->
+                            <h6 class="card-title" th:text="${image.displayName}"></h6>
+                            <p class="card-text small text-muted" th:text="${image.description}"></p>
+                            
+                            <!-- Estado -->
+                            <div class="mb-2">
+                                <span th:if="${image.imageUrl}" class="badge bg-success">
+                                    <i class="bi bi-check-circle"></i> Imagen asignada
+                                </span>
+                                <span th:unless="${image.imageUrl}" class="badge bg-warning">
+                                    <i class="bi bi-exclamation-circle"></i> Sin imagen
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a th:href="@{/admin/imagenes/editar/__${image.sectionName}__}" 
+                               class="btn btn-primary btn-sm w-100">
+                                <i class="bi bi-pencil"></i> Editar Imagen
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Modal nativo HTML para Nueva Noticia -->
+    <dialog id="nuevaNoticiaModal" class="modal-dialog-native">
+
+        <div class="modal-content-native">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-newspaper"></i> Registrar Nueva Noticia
+                </h5>
+                <!-- Botón para cerrar el modal nativo -->
+                <form method="dialog">
+                    <button type="submit" class="btn-close btn-close-white" aria-label="Close"></button>
+                </form>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/admin/noticias/guardar}" method="post" th:object="${noticia}" enctype="multipart/form-data" id="noticiaForm">
+                    
+                    <!-- Título -->
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título *</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="titulo" 
+                               th:field="*{titulo}" 
+                               maxlength="100"
+                               required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}"></div>
+                    </div>
+
+                    <!-- Contenido -->
+                    <div class="mb-3">
+                        <label for="contenido" class="form-label">Contenido *</label>
+                        <textarea class="form-control" 
+                                  id="contenido" 
+                                  th:field="*{contenido}" 
+                                  rows="3" 
+                                  maxlength="500"
+                                  required></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('contenido')}" th:errors="*{contenido}"></div>
+                    </div>
+
+                    <!-- Nombre de la imagen -->
+                    <div class="mb-3">
+                        <label for="imagenFile" class="form-label">Imagen *</label>
+                        <input type="file" 
+                               class="form-control" 
+                               id="imagenFile" 
+                               maxlength="200"
+                               accept="image/*" 
+                               name="imagenFile"
+                               required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('imagen')}" th:errors="*{imagen}"></div>
+                    </div>
+
+                    <!-- URL del enlace -->
+                    <div class="mb-3">
+                        <label for="enlace" class="form-label">URL del Enlace *</label>
+                        <input type="url" 
+                               class="form-control" 
+                               id="enlace" 
+                               th:field="*{enlace}" 
+                               maxlength="200" 
+                               placeholder="https://noticia.com/detalle"
+                               required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('enlace')}" th:errors="*{enlace}"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!-- Form para cerrar el modal con el método dialog -->
+                <form method="dialog">
+                    <button type="submit" class="btn btn-secondary">Cancelar</button>
+                </form>
+                <button type="submit" form="noticiaForm" class="btn btn-primary">Guardar Noticia</button>
+            </div>
+        </div>
+
+    </dialog>
+
+    <!-- Modal para Editar Noticia -->
+    <dialog id="editarNoticiaModal" class="modal-dialog-native">
+        <div class="modal-content-native">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">
+                    <i class="bi bi-pencil-square"></i> Editar Noticia
+                </h5>
+                <!-- Botón para cerrar el modal nativo -->
+                <form method="dialog">
+                    <button type="submit" class="btn-close" aria-label="Close"></button>
+                </form>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/admin/noticias/actualizar}" method="post" enctype="multipart/form-data" id="editarNoticiaForm">
+                    <input type="hidden" id="editarId" name="id">
+                    
+                    <!-- Título -->
+                    <div class="mb-3">
+                        <label for="editarTitulo" class="form-label">Título *</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="editarTitulo" 
+                               name="titulo"
+                               maxlength="100"
+                               required>
+                    </div>
+
+                    <!-- Contenido -->
+                    <div class="mb-3">
+                        <label for="editarContenido" class="form-label">Contenido *</label>
+                        <textarea class="form-control" 
+                                  id="editarContenido" 
+                                  name="contenido"
+                                  rows="3" 
+                                  maxlength="500"
+                                  required></textarea>
+                    </div>
+
+                    <!-- Imagen -->
+                    <div class="mb-3">
+                        <label for="editarImagenFile" class="form-label">Imagen</label>
+                        <input type="file" 
+                               class="form-control" 
+                               id="editarImagenFile" 
+                               accept="image/*" 
+                               name="imagenFile">
+                        <div class="form-text">Dejar vacío para mantener la imagen actual</div>
+                    </div>
+
+                     <!-- Contenedor para mostrar la imagen actual -->
+                    <div class="mt-3" id="imagenActualContainer" style="display: none;">
+                        <label class="form-label text-muted">Imagen Actual:</label>
+                        <div class="text-center">
+                            <img id="imagenActual" 
+                                 class="img-fluid rounded border" 
+                                 style="max-height: 150px; max-width: 100%;"
+                                 alt="Imagen actual de la noticia">
+                        </div>
+                    </div>
+
+                    <!-- URL del enlace -->
+                    <div class="mb-3">
+                        <label for="editarEnlace" class="form-label">URL del Enlace *</label>
+                        <input type="url" 
+                               class="form-control" 
+                               id="editarEnlace" 
+                               name="enlace"
+                               maxlength="200" 
+                               placeholder="https://noticia.com/detalle"
+                               required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!-- Form para cerrar el modal con el método dialog -->
+                <form method="dialog">
+                    <button type="submit" class="btn btn-secondary">Cancelar</button>
+                </form>
+                <button type="submit" form="editarNoticiaForm" class="btn btn-warning">Actualizar Noticia</button>
+            </div>
+        </div>
+    </dialog>
+
+    <style>
+        /* Estilos para el modal nativo */
+        .modal-dialog-native {
+            border: none;
+            border-radius: 8px;
+            padding: 0;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: transparent;
+
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
+            z-index: 10000;
+            
+            /* Animación corregida */
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        .modal-dialog-native::backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            animation: backdropFadeIn 0.3s ease-out;
+        }
+
+        .modal-content-native {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #dee2e6;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        @keyframes backdropFadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive para móviles */
+        @media (max-width: 768px) {
+            .modal-dialog-native {
+                width: 95%;
+                max-width: 95%;
+            }
+            
+            .modal-header,
+            .modal-body,
+            .modal-footer {
+                padding: 1rem;
+            }
+        }
+
+    </style>
+
+    <script>
+        function abrirModalEditarNoticia(button) {
+            const id = button.getAttribute('data-id');
+            const titulo = button.getAttribute('data-titulo');
+            const contenido = button.getAttribute('data-contenido');
+            const enlace = button.getAttribute('data-enlace');
+            const imagen = button.getAttribute('data-imagen');
+            
+            document.getElementById('editarId').value = id;
+            document.getElementById('editarTitulo').value = titulo || '';
+            document.getElementById('editarContenido').value = contenido || '';
+            document.getElementById('editarEnlace').value = enlace || '';
+            
+            const imagenActualContainer = document.getElementById('imagenActualContainer');
+            const imagenActual = document.getElementById('imagenActual');
+            
+            if (imagen && imagen.trim() !== '') {
+                imagenActual.src = imagen;
+                imagenActualContainer.style.display = 'block';
+            } else {
+                imagenActualContainer.style.display = 'none';
+            }
+
+            document.getElementById('editarNoticiaModal').showModal();
+        }
+
+        // Cerrar modales al hacer clic fuera
+        document.addEventListener('DOMContentLoaded', function() {
+            const modals = document.querySelectorAll('.modal-dialog-native');
+            modals.forEach(modal => {
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        modal.close();
+                    }
+                });
+            });
+        });
+
+        // Función robusta para auto-ocultar mensajes
+        function initAutoHideAlerts() {
+            const alerts = document.querySelectorAll('.auto-hide-alert');
+            
+            alerts.forEach(alert => {
+                const hideTime = alert.getAttribute('data-auto-hide') || 3000;
+                
+                setTimeout(() => {
+                    // Si el alert todavía existe y no ha sido cerrado manualmente
+                    if (alert && alert.parentNode && !alert.classList.contains('d-none')) {
+                        // Usar Bootstrap para cerrar si está disponible
+                        if (typeof bootstrap !== 'undefined') {
+                            const bsAlert = new bootstrap.Alert(alert);
+                            bsAlert.close();
+                        } else {
+                            // Fallback: animación manual
+                            alert.style.transition = 'all 0.5s ease';
+                            alert.style.opacity = '0';
+                            alert.style.transform = 'translateY(-10px)';
+                            
+                            setTimeout(() => {
+                                if (alert.parentNode) {
+                                    alert.style.display = 'none';
+                                }
+                            }, 500);
+                        }
+                    }
+                }, parseInt(hideTime));
+            });
+        }
+    
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', initAutoHideAlerts);
+        
+        // También inicializar después de navegación Thymeleaf (si es necesario)
+        document.addEventListener('thymeleaf-rendered', initAutoHideAlerts);
+
+    </script>
+
+</div>
