@@ -46,4 +46,9 @@ public class ActividadService {
         Categoria catEnum = Categoria.valueOf(categoria.toUpperCase());
         return actividadRepository.findByCategoria(catEnum);
     }
+
+    public long contarActividades(){
+        return actividadRepository.count();
+    }
+
 }

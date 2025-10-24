@@ -34,4 +34,8 @@ public class ServicioService {
         }
     }
 
+    public long contarServicios(){
+        return servicioRepository.count();
+    }
+    
 }

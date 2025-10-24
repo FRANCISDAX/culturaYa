@@ -33,5 +33,9 @@ public class NoticiaService {
             noticiaRepository.deleteById(id);
         }
     }
+
+    public long contarNoticias(){
+        return noticiaRepository.count();
+    }
     
 }

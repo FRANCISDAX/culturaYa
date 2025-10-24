@@ -1,6 +1,5 @@
 package com.culturaweb.culturaya.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.culturaweb.culturaya.model.entity.Actividad;
-import com.culturaweb.culturaya.model.enums.Categoria;
 import com.culturaweb.culturaya.service.ActividadService;
 import com.culturaweb.culturaya.service.CloudinaryService;
 
@@ -33,28 +31,14 @@ public class ActividadController {
     private CloudinaryService cloudinaryService;
 
     @GetMapping
-    public String listar(@RequestParam(required = false) String categoria, 
-        Model model) {
-        
-        List<Actividad> actividades;
-
-        actividades = actividadService.buscarPorCategoria(categoria);
-
-        model.addAttribute("actividades", actividades);
-        model.addAttribute("categoriaSeleccionada", categoria);
+    public String listar(Model model) {
+        model.addAttribute("actividades", actividadService.ListarActividades());
+        model.addAttribute("actividad", new Actividad());
         model.addAttribute("vista", "adminActividades");
         return "privado/layout_admin";
     }
 
-    @GetMapping("/nueva")
-    public String nueva(Model model) {
-        model.addAttribute("categorias", Categoria.values());
-        model.addAttribute("actividades", new Actividad());
-        model.addAttribute("vista", "adminActividades");
-        return "privado/layout_admin";
-    }
-
-    @PostMapping("/admins/actividades/guardar")
+    @PostMapping("/guardar")
     public String guardar(
         @Valid Actividad actividad,
         BindingResult result,
@@ -63,16 +47,16 @@ public class ActividadController {
             
         if (result.hasErrors()) {
             result.getAllErrors().forEach(err -> System.out.println("Error: " + err.getDefaultMessage()));
-            attr.addFlashAttribute("org.springframework.validation.BindingResult.actividad", result);
+            attr.addFlashAttribute("org.springframework.validation.BindingResult.noticia", result);
             attr.addFlashAttribute("actividad", actividad);
-            return "redirect:/admin/actividades/nueva";
+            return "redirect:/admin/actividades";
         }
 
-        try { 
+        try {
             // Validar si hay imágen subida.
             if (imagenFile == null || imagenFile.isEmpty()) {
                 attr.addFlashAttribute("error", "Debe seleccionar una imagen.");
-                return "redirect:/admin/actividades/nueva";
+                return "redirect:/admin/actividades";
             }
 
             // Subir imagen a Cloudinary.
@@ -84,7 +68,7 @@ public class ActividadController {
 
             // Guardar en la Base de Datos.
             actividadService.guardar(actividad);
-            attr.addFlashAttribute("exito", "Actividad registrada correctamente.");
+            attr.addFlashAttribute("exito", "Actividad registrado correctamente.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,7 +79,7 @@ public class ActividadController {
 
     }
 
-    @GetMapping("/admins/actividades/editar/{id}")
+    @GetMapping("/editar/{id}")
     public String editar(@PathVariable Long id, Model model, RedirectAttributes attr) {
         Actividad actividad = actividadService.obtenerPorId(id);
 
@@ -104,11 +88,13 @@ public class ActividadController {
             return "redirect:/admin/actividades";
         }
 
-        model.addAttribute("actividad", actividad);
-        return "privado/actividades/editar";
+        model.addAttribute("actividades", actividadService.ListarActividades());
+        model.addAttribute("actividadEditar", actividad);
+        model.addAttribute("vista", "adminActividades");
+        return "privado/layout_admin";
     }
 
-    @PostMapping("/admins/actividades/actualizar")
+    @PostMapping("/actualizar")
     public String actualizar(
             @Valid Actividad actividad,
             BindingResult result,
@@ -118,18 +104,18 @@ public class ActividadController {
         if (result.hasErrors()) {
             attr.addFlashAttribute("org.springframework.validation.BindingResult.noticia", result);
             attr.addFlashAttribute("actividad", actividad);
-            return "redirect:/admin/actividades/editar/" + actividad.getId();
+            return "redirect:/admin/actividades";
         }
 
         try {
-            // Obtener el servicio existente de BD.
+            // Obtener la actividad existente de BD.
             Actividad actividadExistente = actividadService.obtenerPorId(actividad.getId());
             if (actividadExistente == null) {
                 attr.addFlashAttribute("error", "La actividad no existe o fue eliminada.");
                 return "redirect:/admin/actividades";
             }
 
-            // Actualizar los campos editables.
+            // Actualizar los campos editables
             actividadExistente.setTitulo(actividad.getTitulo());
             actividadExistente.setDescripcion(actividad.getDescripcion());
             actividadExistente.setEnlace(actividad.getEnlace());
@@ -145,7 +131,7 @@ public class ActividadController {
                 actividadExistente.setImagenPublicId((String) uploadResult.get("public_id"));
             }
 
-            // 🔹 Guardar los cambios (actualizar)
+            // Guardar los cambios (actualizar)
             actividadService.guardar(actividadExistente);
             attr.addFlashAttribute("exito", "Actividad actualizada correctamente.");
 
@@ -157,7 +143,7 @@ public class ActividadController {
         return "redirect:/admin/actividades";
     }
     
-    @GetMapping("/admins/actividades/eliminar")
+    @GetMapping("/eliminar")
     public String eliminar(@RequestParam("id") Long id, RedirectAttributes attr) {
         try {
             // Buscar la Actividad.
@@ -177,7 +163,8 @@ public class ActividadController {
             }
             // Eliminar el registro de la Base de Datos.
             actividadService.eliminarActividad(id);
-            attr.addFlashAttribute("exito", "Actividad eliminado correctamente.");
+            attr.addFlashAttribute("exito", "Actividad eliminado correctamente.");  
+
         } catch (Exception e) {
             e.printStackTrace();
             attr.addFlashAttribute("error", "No se pudo eliminar la actividad: " + e.getMessage());
