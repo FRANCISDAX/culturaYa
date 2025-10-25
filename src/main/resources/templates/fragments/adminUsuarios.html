@@ -1,17 +1,29 @@
 <div th:fragment="adminUsuarios">
-    <h1 class="h3 mb-4">Panel de Usuarios</h1>
+    <!-- Encabezado de página -->
+    <div class="page-header">
 
-    <div class="row">
+        <div>
+            <h1 class="page-title">Usuarios</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Inicio</a></li>
+                    <li class="breadcrumb-item active">Usuarios</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <!-- Botón para abrir el modal nativo -->
+            <button type="button" class="btn btn-primary" onclick="document.getElementById('nuevaNoticiaModal').showModal()">
+                <i class="bi bi-plus-circle me-2"></i>
+                Nuevo Usuario
+            </button>
 
-        <div class="col-md-4 mb-3">
-            <div class="card text-bg-primary">
-                <div class="card-body">
-                    <h5 class="card-title">Total Usuarios</h5>
-                    <p class="card-text fs-4">23</p>
-                </div>
-            </div>
         </div>
 
     </div>
+    <!-- Contenido específico de Noticias -->
+    <main class="container">
+
+    </main>
 
 </div>
