@@ -16,11 +16,22 @@ public class ActividadService {
     @Autowired
     private ActividadRepository actividadRepository;
 
+    @Autowired
+    private MovimientoService movimientoService;
+
     public List<Actividad> ListarActividades(){
         return actividadRepository.findAll();
     }
 
     public Actividad guardar(Actividad actividad){
+        boolean esNuevo = actividad.getId() == null;
+
+        if (esNuevo) {
+            movimientoService.registrar("Actividad", "Creado", "Se creó la actividad: " + actividad.getTitulo());
+        } else {
+            movimientoService.registrar("Actividad", "Actualizado", "Se actualizó la actividad: " + actividad.getTitulo());
+        }
+
         return actividadRepository.save(actividad);
     }
 
@@ -30,8 +41,10 @@ public class ActividadService {
     }
 
     public void eliminarActividad(Long id){
-        if( actividadRepository.existsById(id)){
-            actividadRepository.deleteById(id);
+        Actividad actividad = actividadRepository.findById(id).orElse(null);
+        if (actividad != null) {
+            actividadRepository.delete(actividad);
+            movimientoService.registrar("Actividad", "Eliminado", "Se eliminó la actividad: " + actividad.getTitulo());
         }
     }
 

@@ -15,7 +15,18 @@ public class ServicioService {
     @Autowired
     private ServicioRepository servicioRepository;
 
+    @Autowired
+    private MovimientoService movimientoService;
+
     public Servicio guardar(Servicio servicio){
+        boolean esNuevo = servicio.getId() == null;
+
+        if (esNuevo) {
+            movimientoService.registrar("Servicio", "Creado", "Se creó el servicio: " + servicio.getTitulo());
+        } else {
+            movimientoService.registrar("Servicio", "Actualizado", "Se actualizó el servicio: " + servicio.getTitulo());
+        }
+
         return servicioRepository.save(servicio);
     }
 
@@ -29,10 +40,11 @@ public class ServicioService {
     }
     
     public void eliminarServicio(Long id){
-        if (servicioRepository.existsById(id)){
-            servicioRepository.deleteById(id);
-        }
-    }
+        Servicio servicio = servicioRepository.findById(id).orElse(null);
+        if (servicio != null) {
+            servicioRepository.delete(servicio);
+            movimientoService.registrar("Servicio", "Eliminado", "Se eliminó el servicio: " + servicio.getTitulo());
+        }    }
 
     public long contarServicios(){
         return servicioRepository.count();

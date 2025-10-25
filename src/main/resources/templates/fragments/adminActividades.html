@@ -264,7 +264,7 @@
                 </form>
             </div>
             <div class="modal-body">
-                <form th:action="@{/admin/actividades/guardar}" method="post" th:object="${actividad}" enctype="multipart/form-data" id="editarActividadForm">
+                <form th:action="@{/admin/actividades/actualizar}" method="post" th:object="${actividad}" enctype="multipart/form-data" id="editarActividadForm">
                     <input type="hidden" id="editarId" th:field="*{id}">
 
                     <!-- Título -->
@@ -347,9 +347,8 @@
                             id="imagenFile" 
                             maxlength="200"
                             accept="image/*" 
-                            name="imagenFile"
-                            required>
-                        <div class="text-danger" th:if="${#fields.hasErrors('imagen')}" th:errors="*{imagen}"></div>
+                            name="imagenFile">
+                        <div class="form-text">Dejar vacío para mantener la imagen actual</div>
                     </div>
 
                     <!-- Contenedor para mostrar la imagen actual -->
@@ -581,6 +580,37 @@
             });
         });
 
+        document.addEventListener('DOMContentLoaded', function () {
+            const filtro = document.getElementById('filtroCategoria');
+            const tarjetas = document.querySelectorAll('[data-categoria]');
+
+            // Recuperar categoría guardada (si existe)
+            const categoriaGuardada = localStorage.getItem('filtroCategoria');
+            if (categoriaGuardada) {
+                filtro.value = categoriaGuardada;
+                aplicarFiltro(categoriaGuardada);
+            }
+
+            // Al cambiar el filtro, guardar y aplicar
+            filtro.addEventListener('change', function () {
+                const categoriaSeleccionada = this.value;
+                localStorage.setItem('filtroCategoria', categoriaSeleccionada);
+                aplicarFiltro(categoriaSeleccionada);
+            });
+
+            // Función para mostrar/ocultar según categoría
+            function aplicarFiltro(categoriaSeleccionada) {
+                tarjetas.forEach(card => {
+                    const categoria = card.getAttribute('data-categoria');
+                    if (categoriaSeleccionada === 'TODAS' || categoria === categoriaSeleccionada) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+        });
+        
     </script>
 
 </div>

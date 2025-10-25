@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.culturaweb.culturaya.service.ActividadService;
+import com.culturaweb.culturaya.service.MovimientoService;
 import com.culturaweb.culturaya.service.NoticiaService;
 import com.culturaweb.culturaya.service.ServicioService;
 
@@ -23,6 +24,9 @@ public class AdminController {
     @Autowired
     private ServicioService servicioService;
 
+    @Autowired
+    private MovimientoService movimientoService;
+
     @GetMapping({"","/dashboard"})
     public String dashboard(Model model) {
         long totalNoticias = noticiaService.contarNoticias();
@@ -32,6 +36,7 @@ public class AdminController {
         model.addAttribute("totalNoticias", totalNoticias);
         model.addAttribute("totalActividades", totalActividades);
         model.addAttribute("totalServicios", totalServicios);
+         model.addAttribute("movimientos", movimientoService.ultimosCinco());
         model.addAttribute("vista", "adminDashboard");
         model.addAttribute("titulo", "Dashboard - Panel de Administración");
         return "privado/layout_admin";

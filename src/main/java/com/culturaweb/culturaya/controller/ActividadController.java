@@ -47,25 +47,26 @@ public class ActividadController {
             
         if (result.hasErrors()) {
             result.getAllErrors().forEach(err -> System.out.println("Error: " + err.getDefaultMessage()));
-            attr.addFlashAttribute("org.springframework.validation.BindingResult.noticia", result);
+            attr.addFlashAttribute("org.springframework.validation.BindingResult.actividad", result);
             attr.addFlashAttribute("actividad", actividad);
             return "redirect:/admin/actividades";
         }
 
         try {
             // Validar si hay imágen subida.
-            if (imagenFile == null || imagenFile.isEmpty()) {
+            if (actividad.getId() == null && (imagenFile == null || imagenFile.isEmpty())) {
                 attr.addFlashAttribute("error", "Debe seleccionar una imagen.");
                 return "redirect:/admin/actividades";
             }
 
-            // Subir imagen a Cloudinary.
-            Map<String, Object> uploadResult = cloudinaryService.uploadFile(imagenFile);
-
-            // Guardar la URL y el public_id.
-            actividad.setImagen((String) uploadResult.get("secure_url"));
-            actividad.setImagenPublicId((String) uploadResult.get("public_id"));
-
+            if (imagenFile != null && !imagenFile.isEmpty()) {
+                // Subir imagen a Cloudinary.
+                Map<String, Object> uploadResult = cloudinaryService.uploadFile(imagenFile);
+                // Guardar la URL y el public_id.
+                actividad.setImagen((String) uploadResult.get("secure_url"));
+                actividad.setImagenPublicId((String) uploadResult.get("public_id"));
+            }
+            
             // Guardar en la Base de Datos.
             actividadService.guardar(actividad);
             attr.addFlashAttribute("exito", "Actividad registrado correctamente.");
@@ -120,13 +121,14 @@ public class ActividadController {
             actividadExistente.setDescripcion(actividad.getDescripcion());
             actividadExistente.setEnlace(actividad.getEnlace());
 
-            if (!imagenFile.isEmpty()) {
+            if (imagenFile != null && !imagenFile.isEmpty()) {
+               // Si ya tenía una imagen, eliminarla de Cloudinary
                 if (actividadExistente.getImagenPublicId() != null) {
                     cloudinaryService.deleteFile(actividadExistente.getImagenPublicId());
                 }
 
+                // Subir nueva imagen
                 Map<String, Object> uploadResult = cloudinaryService.uploadFile(imagenFile);
-
                 actividadExistente.setImagen((String) uploadResult.get("secure_url"));
                 actividadExistente.setImagenPublicId((String) uploadResult.get("public_id"));
             }

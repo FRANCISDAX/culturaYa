@@ -15,7 +15,18 @@ public class NoticiaService {
     @Autowired
     private NoticiaRepository noticiaRepository;
 
+    @Autowired
+    private MovimientoService movimientoService;
+
     public Noticia guardar(Noticia noticia){
+        boolean esNuevo = noticia.getId() == null;
+
+        if (esNuevo) {
+            movimientoService.registrar("Noticia", "Creado", "Se creó la noticia: " + noticia.getTitulo());
+        } else {
+            movimientoService.registrar("Noticia", "Actualizado", "Se actualizó la noticia: " + noticia.getTitulo());
+        }
+
         return noticiaRepository.save(noticia);
     }
 
@@ -29,8 +40,10 @@ public class NoticiaService {
     }
     
     public void eliminarNoticia(Long id){
-        if (noticiaRepository.existsById(id)){
-            noticiaRepository.deleteById(id);
+        Noticia noticia = noticiaRepository.findById(id).orElse(null);
+        if (noticia != null) {
+            noticiaRepository.delete(noticia);
+            movimientoService.registrar("Noticia", "Eliminado", "Se eliminó la noticia: " + noticia.getTitulo());
         }
     }
 
