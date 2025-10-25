@@ -12,11 +12,15 @@
                     <i class="bi bi-list" style="font-size: 1.5rem;"></i>
                 </button>
                 <!-- Menú usuario (visible en desktop) -->
-                <div class="user-menu d-none d-lg-flex">
-                    <span>Administrador</span>
-                    <div class="user-avatar">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
+                <div class="user-menu d-none d-lg-flex align-items-center gap-3">
+                    <span class="fw-semibold text-dark">
+                        <i class="bi bi-person-fill me-1"></i>
+                        <span th:text="${#authentication.name}">Usuario</span>
+                    </span>
+                    <small class="text-white fw-bold">
+                        <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Administrador</span>
+                        <span th:if="${#authorization.expression('hasRole(''USER'')')}">Usuario</span>
+                    </small>
                 </div>
             </div>
         </div>

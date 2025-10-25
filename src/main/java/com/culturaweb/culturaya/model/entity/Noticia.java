@@ -58,4 +58,8 @@ public class Noticia {
     @UpdateTimestamp
     private LocalDateTime fechaActualizacion;
 
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+    
 }
