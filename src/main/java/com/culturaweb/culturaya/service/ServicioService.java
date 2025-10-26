@@ -36,7 +36,7 @@ public class ServicioService {
         return servicioRepository.findAll();
     }
 
-        public List<Servicio> listarPorUsuario(Long usuarioId) {
+    public List<Servicio> listarPorUsuario(Long usuarioId) {
         return servicioRepository.findByUsuarioId(usuarioId);
     }
 

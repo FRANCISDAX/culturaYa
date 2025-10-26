@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +20,7 @@ import com.culturaweb.culturaya.configuration.CustomUserDetails;
 import com.culturaweb.culturaya.model.entity.Servicio;
 import com.culturaweb.culturaya.model.entity.Usuario;
 import com.culturaweb.culturaya.service.ServicioService;
+import com.culturaweb.culturaya.service.UsuarioService;
 import com.culturaweb.culturaya.service.CloudinaryService;
 
 import jakarta.validation.Valid;
@@ -33,6 +35,9 @@ public class ServicioController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
+    @Autowired
+    private UsuarioService usuarioService;
+    
     @GetMapping
     public String listar(Model model, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -55,7 +60,11 @@ public class ServicioController {
         BindingResult result,
         @RequestParam("imagenFile") MultipartFile imagenFile,
         RedirectAttributes attr) {
-            
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        Usuario usuario = usuarioService.buscarPorEmail(email);
+
         if (result.hasErrors()) {
             result.getAllErrors().forEach(err -> System.out.println("Error: " + err.getDefaultMessage()));
             attr.addFlashAttribute("org.springframework.validation.BindingResult.noticia", result);
@@ -78,6 +87,7 @@ public class ServicioController {
             servicio.setImagenPublicId((String) uploadResult.get("public_id"));
 
             // Guardar en la Base de Datos.
+            servicio.setUsuario(usuario);
             servicioService.guardar(servicio);
             attr.addFlashAttribute("exito", "Servicio registrado correctamente.");
 
@@ -154,7 +164,7 @@ public class ServicioController {
         return "redirect:/admin/servicios";
     }
     
-    @GetMapping("/admins/servicios/eliminar")
+    @GetMapping("/eliminar")
     public String eliminar(@RequestParam("id") Long id, RedirectAttributes attr) {
         try {
             // Buscar el Servicio.

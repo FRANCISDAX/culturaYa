@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +21,7 @@ import com.culturaweb.culturaya.model.entity.Actividad;
 import com.culturaweb.culturaya.model.entity.Usuario;
 import com.culturaweb.culturaya.service.ActividadService;
 import com.culturaweb.culturaya.service.CloudinaryService;
+import com.culturaweb.culturaya.service.UsuarioService;
 
 import jakarta.validation.Valid;
 
@@ -32,6 +34,9 @@ public class ActividadController {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @GetMapping
     public String listar(Model model, Authentication authentication) {
@@ -55,7 +60,11 @@ public class ActividadController {
         BindingResult result,
         @RequestParam("imagenFile") MultipartFile imagenFile,
         RedirectAttributes attr) {
-            
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        Usuario usuario = usuarioService.buscarPorEmail(email);
+
         if (result.hasErrors()) {
             result.getAllErrors().forEach(err -> System.out.println("Error: " + err.getDefaultMessage()));
             attr.addFlashAttribute("org.springframework.validation.BindingResult.actividad", result);
@@ -79,6 +88,7 @@ public class ActividadController {
             }
             
             // Guardar en la Base de Datos.
+            actividad.setUsuario(usuario);
             actividadService.guardar(actividad);
             attr.addFlashAttribute("exito", "Actividad registrado correctamente.");
 

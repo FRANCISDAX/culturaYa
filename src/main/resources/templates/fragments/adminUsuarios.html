@@ -60,7 +60,7 @@
                             <h5 class="fw-bold mb-1" th:text="${usuario.nombre}">Nombre Usuario</h5>
                             <p class="text-muted mb-1" th:text="${usuario.email}">email@example.com</p>
                             <span th:text="${usuario.rol}"
-                                  th:classappend="${usuario.rol} == 'ADMIN' ? 'badge bg-primary badge-role' : 'badge bg-secondary badge-role'">
+                                  th:classappend="${#strings.toUpperCase(usuario.rol)} == 'ADMIN' ? 'badge bg-primary badge-role' : 'badge bg-secondary badge-role'">
                                 ROL
                             </span>
                         </div>
@@ -153,6 +153,17 @@
             formUsuario.reset();
             formUsuario.classList.remove('was-validated');
             document.getElementById('id').value = "";
+            document.getElementById('nombre').value = "";
+            document.getElementById('email').value = "";
+            document.getElementById('password').value = "";
+            const rolSelect = document.getElementById('rol');
+            if (rolSelect) rolSelect.selectedIndex = 0;
+            const formControls = formUsuario.querySelectorAll('.form-control, .form-select');
+            formControls.forEach(control => {
+                control.classList.remove('is-valid', 'is-invalid');
+            });
+            document.getElementById('email').removeAttribute('readonly');
+            document.getElementById('password').removeAttribute('readonly');
             emailError.style.display = 'none';
             emailInput.classList.remove('is-invalid');
             btnGuardar.disabled = false;
@@ -170,7 +181,9 @@
                     document.getElementById('nombre').value = usuario.nombre;
                     document.getElementById('email').value = usuario.email;
                     document.getElementById('rol').value = usuario.rol;
-                    document.getElementById('password').value = '';
+                    document.getElementById('password').value = "********";
+                    document.getElementById('email').setAttribute('readonly', 'readonly');
+                    document.getElementById('password').setAttribute('readonly', 'readonly');
                     emailError.style.display = 'none';
                     emailInput.classList.remove('is-invalid');
                     btnGuardar.disabled = false;
@@ -220,17 +233,6 @@
                 ${document.getElementById('id').value ? 'Actualizando...' : 'Guardando...'}
             `;
             formUsuario.submit();
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            window.abrirModalNuevo = function() {
-                const modal = document.getElementById('nuevoUsuarioModal');
-                if (!modal) {
-                    console.error("❌ No se encontró el modal en el DOM");
-                    return;
-                }
-                modal.showModal();
-            };
         });
         
     </script>
@@ -308,6 +310,15 @@
 
         .form-control, .form-select {
             border-radius: 0.5rem;
+        }
+
+        #nuevoUsuarioModal.modal-usuario {
+            background-color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        #nuevoUsuarioModal.modal-usuario.modo-edicion {
+            background-color: #f0f4ff; /* azul suave */
         }
 
     </style>
