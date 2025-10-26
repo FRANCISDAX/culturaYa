@@ -3,6 +3,7 @@ package com.culturaweb.culturaya.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.culturaweb.culturaya.configuration.CustomUserDetails;
 import com.culturaweb.culturaya.model.entity.Actividad;
+import com.culturaweb.culturaya.model.entity.Usuario;
 import com.culturaweb.culturaya.service.ActividadService;
 import com.culturaweb.culturaya.service.CloudinaryService;
 
@@ -31,8 +34,16 @@ public class ActividadController {
     private CloudinaryService cloudinaryService;
 
     @GetMapping
-    public String listar(Model model) {
-        model.addAttribute("actividades", actividadService.ListarActividades());
+    public String listar(Model model, Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Usuario usuario = userDetails.getUsuario();
+
+        if (usuario.getRol().name().equals("ADMIN")) {
+            model.addAttribute("actividades", actividadService.ListarActividades());
+        } else {
+            model.addAttribute("actividades", actividadService.listarPorUsuario(usuario.getId()));
+        }
+
         model.addAttribute("actividad", new Actividad());
         model.addAttribute("vista", "adminActividades");
         return "privado/layout_admin";

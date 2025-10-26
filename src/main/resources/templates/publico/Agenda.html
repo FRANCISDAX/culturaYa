@@ -86,7 +86,7 @@
 
             <div th:each="feria : ${ferias}" class="evento">
 
-                <img th:src="${feria.imagen}" alt="${teatro.titulo}">
+                <img th:src="${feria.imagen}" alt="${feria|.titulo}">
                 <div class="descripcion">
                     <h3 th:text="${feria.titulo}">Titulo</h3>
                     <p th:text="${feria.lugar}">Lugar</p>

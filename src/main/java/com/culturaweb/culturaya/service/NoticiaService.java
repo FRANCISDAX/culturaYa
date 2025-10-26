@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.culturaweb.culturaya.model.entity.Noticia;
+import com.culturaweb.culturaya.model.entity.Usuario;
+import com.culturaweb.culturaya.model.enums.Rol;
 import com.culturaweb.culturaya.repository.NoticiaRepository;
+
 
 @Service
 public class NoticiaService {
@@ -32,6 +35,18 @@ public class NoticiaService {
 
     public List<Noticia> listarNoticias(){
         return noticiaRepository.findAll();
+    }
+
+    public List<Noticia> listarPorUsuario(Long usuarioId) {
+        return noticiaRepository.findByUsuarioId(usuarioId);
+    }
+
+    public List<Noticia> listarNoticias(Usuario usuario) {
+        if (usuario.getRol() == Rol.ADMIN) {
+            return noticiaRepository.findAll();
+        } else {
+            return noticiaRepository.findByUsuarioId(usuario.getId());
+        }
     }
 
     public Noticia obtenerPorId(Long id) {

@@ -3,13 +3,13 @@ package com.culturaweb.culturaya.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.culturaweb.culturaya.configuration.CustomUserDetails;
 import com.culturaweb.culturaya.model.entity.Usuario;
 import com.culturaweb.culturaya.model.enums.Rol;
 import com.culturaweb.culturaya.repository.UsuarioRepository;
@@ -100,11 +100,7 @@ public class UsuarioService implements UserDetailsService{
         Usuario usuario = usuarioRepository.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException("Usuario no Encontrado."));
         
-        return User.builder()
-            .username(usuario.getEmail())
-            .password(usuario.getPassword())
-            .roles(usuario.getRol().name())
-            .build();        
+        return new CustomUserDetails(usuario);        
     }
 
     // ------------------------------------------------------------

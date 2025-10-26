@@ -12,7 +12,7 @@ import com.culturaweb.culturaya.model.enums.Categoria;
 @Repository
 public interface ActividadRepository extends JpaRepository<Actividad, Long>{
 
+    List<Actividad> findByUsuarioId(Long usuarioId);
     List<Actividad> findByCategoria(Categoria categoria);
-    List<Actividad> findByCategoria(String categoria);
 
 }

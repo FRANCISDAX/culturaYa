@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.culturaweb.culturaya.model.entity.Actividad;
+import com.culturaweb.culturaya.model.entity.Usuario;
 import com.culturaweb.culturaya.model.enums.Categoria;
+import com.culturaweb.culturaya.model.enums.Rol;
 import com.culturaweb.culturaya.repository.ActividadRepository;
 
 @Service
@@ -62,6 +64,18 @@ public class ActividadService {
 
     public long contarActividades(){
         return actividadRepository.count();
+    }
+
+    public List<Actividad> listarPorUsuario(Long usuarioId) {
+        return actividadRepository.findByUsuarioId(usuarioId);
+    }
+
+    public List<Actividad> listarActividades(Usuario usuario) {
+        if (usuario.getRol() == Rol.ADMIN) {
+            return actividadRepository.findAll();
+        } else {
+            return actividadRepository.findByUsuarioId(usuario.getId());
+        }
     }
 
 }

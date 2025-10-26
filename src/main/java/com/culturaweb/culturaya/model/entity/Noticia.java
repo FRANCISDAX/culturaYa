@@ -58,7 +58,7 @@ public class Noticia {
     @UpdateTimestamp
     private LocalDateTime fechaActualizacion;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
     
