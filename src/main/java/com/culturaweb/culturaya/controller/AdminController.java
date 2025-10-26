@@ -47,17 +47,5 @@ public class AdminController {
         model.addAttribute("titulo", "Dashboard - Panel de Administración");
         return "privado/layout_admin";
     }
-            
-    @GetMapping("/usuarios")
-    public String usuarios(Model model) {
-        model.addAttribute("vista", "adminUsuarios");
-        model.addAttribute("titulo", "Usuarios - Panel de Administración");
-        return "privado/layout_admin";
-    }
-    
-    @GetMapping("/perfil")
-    public String perfil(Model model) {
-        return "privado/layout_admin";
-    }
-
+                
 }

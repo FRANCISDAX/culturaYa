@@ -13,47 +13,47 @@
     </div>
 
     <!-- Estadísticas -->
-<div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon bg-primary">
-                <i class="bi bi-people"></i>
+    <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon bg-primary">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" th:text="${totalUsuarios ?: '1,248'}">0</div>
+                    <div class="stat-label">Usuarios totales</div>
+                </div>
             </div>
-            <div class="stat-info">
-                <div class="stat-value" th:text="${totalUsuarios ?: '1,248'}">0</div>
-                <div class="stat-label">Usuarios totales</div>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-success">
+                    <i class="bi bi-newspaper"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" th:text="${totalNoticias ?: '56'}">0</div>
+                    <div class="stat-label">Noticias publicadas</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-warning">
+                    <i class="bi bi-calendar-event"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" th:text="${totalActividades ?: '24'}">0</div>
+                    <div class="stat-label">Actividades activas</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-accent">
+                    <i class="bi bi-gear"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" th:text="${totalServicios ?: '12'}">12</div>
+                    <div class="stat-label">Servicios ofrecidos</div>
+                </div>
             </div>
         </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon bg-success">
-                <i class="bi bi-newspaper"></i>
-            </div>
-            <div class="stat-info">
-                <div class="stat-value" th:text="${totalNoticias ?: '56'}">0</div>
-                <div class="stat-label">Noticias publicadas</div>
-            </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon bg-warning">
-                <i class="bi bi-calendar-event"></i>
-            </div>
-            <div class="stat-info">
-                <div class="stat-value" th:text="${totalActividades ?: '24'}">0</div>
-                <div class="stat-label">Actividades activas</div>
-            </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon bg-accent">
-                <i class="bi bi-gear"></i>
-            </div>
-            <div class="stat-info">
-                <div class="stat-value" th:text="${totalServicios ?: '12'}">12</div>
-                <div class="stat-label">Servicios ofrecidos</div>
-            </div>
-        </div>
-    </div>
     <!-- Contenido dinámico - Mejorado para mobile -->
     <div class="row mt-4">
         <div class="col-12 col-lg-8 mb-4 mb-lg-0">
@@ -110,4 +110,5 @@
             </div>
         </div>
     </div>
+    
 </div>

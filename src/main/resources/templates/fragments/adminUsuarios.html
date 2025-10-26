@@ -13,7 +13,7 @@
         </div>
         <div>
             <!-- Botón para abrir el modal nativo -->
-            <button type="button" class="btn btn-primary" onclick="document.getElementById('nuevaNoticiaModal').showModal()">
+            <button type="button" class="btn btn-primary" onclick="abrirModalNuevo()">
                 <i class="bi bi-plus-circle me-2"></i>
                 Nuevo Usuario
             </button>
@@ -21,9 +21,295 @@
         </div>
 
     </div>
-    <!-- Contenido específico de Noticias -->
+    <!-- Contenido específico de Usuarios -->
     <main class="container">
+        <!-- Mensajes Flash para éxito y error -->
+        <div th:if="${exito}" 
+            class="alert alert-success alert-dismissible fade show auto-hide-alert" 
+            role="alert" 
+            data-auto-hide="3000">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${exito}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" 
+            class="alert alert-danger alert-dismissible fade show auto-hide-alert" 
+            role="alert" 
+            data-auto-hide="3000">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <!-- Mensaje si no hay noticias -->
+        <div th:if="${#lists.isEmpty(usuarios)}" class="alert alert-info text-center" role="alert">
+            No hay usuarios registrados.
+        </div>
+        <!-- Tabla de usuarios -->
+        <div class="row g-3" th:if="${!#lists.isEmpty(usuarios)}">
+
+            <!-- Tarjeta de usuario -->
+            <div class="col-12 col-md-6 col-lg-4" th:each="usuario : ${usuarios}">
+                <div class="card card-user h-100">
+                    <div class="row g-0 align-items-center p-3">
+                        <div class="col-3 text-center">
+                            <img th:src="'https://ui-avatars.com/api/?name=' + ${usuario.nombre} + '&background=' + (${usuario.rol}=='ADMIN' ? '0d6efd' : '6c757d') + '&color=fff'"
+                                 alt="Avatar"
+                                 class="avatar">
+                        </div>
+                        <div class="col-9">
+                            <h5 class="fw-bold mb-1" th:text="${usuario.nombre}">Nombre Usuario</h5>
+                            <p class="text-muted mb-1" th:text="${usuario.email}">email@example.com</p>
+                            <span th:text="${usuario.rol}"
+                                  th:classappend="${usuario.rol} == 'ADMIN' ? 'badge bg-primary badge-role' : 'badge bg-secondary badge-role'">
+                                ROL
+                            </span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 px-3 pb-3">
+                        <button type="button" class="btn btn-warning btn-sm" th:onclick="'editarUsuario(' + ${usuario.id} + ')'">
+                            <i class="bi bi-pencil-square me-1"></i> Editar
+                        </button>
+                        <a th:href="@{/admin/usuarios/eliminar/{id}(id=${usuario.id})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('¿Seguro de eliminar este usuario?')">
+                            <i class="bi bi-trash me-1"></i> Eliminar
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
 
     </main>
+    <!-- Modal: Nuevo / Actualiza Usuario -->
+    <dialog id="nuevoUsuarioModal" class="modal-usuario">
+
+        <form th:object="${usuario}" th:action="@{/admin/usuarios/guardar}" method="post" class="modal-content" novalidate>
+            <input type="hidden" id="id" name="id">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalUsuarioTitulo">
+                    <i class="bi bi-person-plus-fill me-2"></i> Nuevo Usuario
+                </h5>
+                <button type="button" class="btn-close" onclick="cerrarModalUsuario()"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="nombre" class="form-label fw-semibold">Nombre completo</label>
+                    <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej. Juan Pérez" required>
+                    <div class="invalid-feedback">El nombre es obligatorio.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold">Correo electrónico</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Ej. usuario@empresa.com" required>
+                    <div class="invalid-feedback">Ingrese un correo válido.</div>
+                    <small id="emailError" class="text-danger fw-semibold" style="display:none;">
+                        Este correo ya está registrado.
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label fw-semibold">Contraseña</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Mínimo 6 caracteres" minlength="6" required>
+                    <div class="invalid-feedback">La contraseña es obligatoria (mínimo 6 caracteres).</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="rol" class="form-label fw-semibold">Rol</label>
+                    <select th:field="*{rol}" class="form-select">
+                        <option th:each="r : ${T(com.culturaweb.culturaya.model.enums.Rol).values()}"
+                                th:value="${r}"
+                                th:text="${r.name()}">
+                        </option>
+                    </select>
+                    <div class="invalid-feedback">Seleccione un rol.</div>
+                </div>
+            </div>
+
+            <div class="modal-footer d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalUsuario()">
+                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                </button>
+                <button type="submit" id="btnGuardarUsuario" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i> Guardar
+                </button>
+            </div>
+            
+        </form>
+
+    </dialog>
+
+    <script>
+        const modal = document.getElementById('nuevoUsuarioModal');
+        const titulo = document.getElementById('modalUsuarioTitulo');
+        const btnGuardar = document.getElementById('btnGuardarUsuario');
+        const formUsuario = document.querySelector('#nuevoUsuarioModal form');
+        const emailInput = document.getElementById('email');
+        const emailError = document.getElementById('emailError');
+
+        function abrirModalNuevo() {
+            formUsuario.reset();
+            formUsuario.classList.remove('was-validated');
+            document.getElementById('id').value = "";
+            emailError.style.display = 'none';
+            emailInput.classList.remove('is-invalid');
+            btnGuardar.disabled = false;
+            titulo.innerHTML = '<i class="bi bi-person-plus-fill me-2"></i> Nuevo Usuario';
+            btnGuardar.innerHTML = '<i class="bi bi-save me-1"></i> Guardar';
+            modal.showModal();
+        }
+
+        function editarUsuario(id) {
+            fetch(`/admin/usuarios/buscar/${id}`)
+                .then(res => res.json())
+                .then(usuario => {
+                    formUsuario.classList.remove('was-validated');
+                    document.getElementById('id').value = usuario.id;
+                    document.getElementById('nombre').value = usuario.nombre;
+                    document.getElementById('email').value = usuario.email;
+                    document.getElementById('rol').value = usuario.rol;
+                    document.getElementById('password').value = '';
+                    emailError.style.display = 'none';
+                    emailInput.classList.remove('is-invalid');
+                    btnGuardar.disabled = false;
+                    titulo.innerHTML = '<i class="bi bi-pencil-square me-2"></i> Editar Usuario';
+                    btnGuardar.innerHTML = '<i class="bi bi-save me-1"></i> Actualizar';
+                    modal.showModal();
+                });
+        }
+
+        function cerrarModalUsuario() {
+            modal.close();
+        }
+
+        emailInput.addEventListener('blur', () => {
+            const email = emailInput.value.trim();
+            const id = document.getElementById('id').value || "";
+
+            if (email === "") return;
+
+            fetch(`/admin/usuarios/existeEmail?email=${encodeURIComponent(email)}&id=${id}`)
+                .then(res => res.json())
+                .then(existe => {
+                    if (existe) {
+                        emailError.style.display = 'block';
+                        emailInput.classList.add('is-invalid');
+                        btnGuardar.disabled = true;
+                    } else {
+                        emailError.style.display = 'none';
+                        emailInput.classList.remove('is-invalid');
+                        btnGuardar.disabled = false;
+                    }
+                })
+                .catch(err => console.error("Error al verificar email:", err));
+        });
+
+        formUsuario.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            if (!formUsuario.checkValidity() || emailError.style.display === 'block') {
+                formUsuario.classList.add('was-validated');
+                return; // no enviamos si hay errores
+            }
+
+            btnGuardar.disabled = true;
+            btnGuardar.innerHTML = `
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                ${document.getElementById('id').value ? 'Actualizando...' : 'Guardando...'}
+            `;
+            formUsuario.submit();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.abrirModalNuevo = function() {
+                const modal = document.getElementById('nuevoUsuarioModal');
+                if (!modal) {
+                    console.error("❌ No se encontró el modal en el DOM");
+                    return;
+                }
+                modal.showModal();
+            };
+        });
+        
+    </script>
+
+    <style>
+        .card-user {
+            border: none;
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+        }
+        .card-user:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .badge-role {
+            font-size: 0.75rem;
+            padding: 0.4em 0.6em;
+            border-radius: 0.5rem;
+        }
+
+        dialog.modal-usuario {
+            border: none;
+            border-radius: 1rem;
+            padding: 0;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            animation: modalFadeIn 0.25s ease;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translate(-50%, -45%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        dialog::backdrop {
+            background-color: rgba(0,0,0,0.45);
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 1rem 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-radius: 1rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.5rem;
+        }
+
+    </style>
 
 </div>

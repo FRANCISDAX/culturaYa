@@ -23,6 +23,10 @@ public class UsuarioService implements UserDetailsService{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // -------------------------------
+    // Registrar Usuarios.
+    // -------------------------------
+
     public String registrar(Usuario usuario) {
         if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
             return "EMAIL ya está registrado.";
@@ -38,14 +42,14 @@ public class UsuarioService implements UserDetailsService{
     }
 
     // -------------------------------
-    // Listar todos los usuarios
+    // Listar todos los usuarios.
     // -------------------------------
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
     }
 
     // -------------------------------
-    // Grabar usuario
+    // Grabar usuario.
     // -------------------------------
     public Usuario guardarUsuario(Usuario usuario) {
         if (usuario.getId() == null) {
@@ -68,26 +72,29 @@ public class UsuarioService implements UserDetailsService{
     }
 
     // -------------------------------
-    // Borrar usuario
+    // Borrar usuario.
     // -------------------------------
     public void eliminarUsuario(Long id) {
         usuarioRepository.deleteById(id);
     }
 
     // -------------------------------
-    // Buscar usuario por ID
+    // Buscar usuario por ID.
     // -------------------------------
     public Usuario obtenerUsuarioPorId(Long id) {
         return usuarioRepository.findById(id).orElse(null);
     }
 
     // -------------------------------
-    // Total de Usuarios
+    // Contar usuarios totales.
     // -------------------------------
     public long contarUsuarios(){
         return usuarioRepository.count();
     }
 
+    // ------------------------------------------------------------
+    // Autenticación: carga de usuario por email (Spring Security).
+    // ------------------------------------------------------------
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByEmail(email)
@@ -98,6 +105,13 @@ public class UsuarioService implements UserDetailsService{
             .password(usuario.getPassword())
             .roles(usuario.getRol().name())
             .build();        
+    }
+
+    // ------------------------------------------------------------
+    // Buscar por Email.
+    // ------------------------------------------------------------
+    public Usuario buscarPorEmail(String email) {
+        return usuarioRepository.findByEmail(email).orElse(null);
     }
 
 }

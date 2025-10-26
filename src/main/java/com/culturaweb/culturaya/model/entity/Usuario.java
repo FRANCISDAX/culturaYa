@@ -18,7 +18,10 @@ public class Usuario {
     private Long id;
 
     private String nombre;
+
+    @Column(unique = true, nullable = false)
     private String email;
+    
     private String password;
 
     @Enumerated(EnumType.STRING)

@@ -42,21 +42,11 @@
                 <div th:replace="~{fragments/adminServicios :: adminServicios}"></div>
             </div>
 
-            <!-- Imágenes -->
-            <div th:if="${vista == 'adminImagenes'}">
-                <div th:replace="~{fragments/adminImagenes :: adminImagenes}"></div>
-            </div>
-
             <!-- Usuarios -->
             <div th:if="${vista == 'adminUsuarios'}">
                 <div th:replace="~{fragments/adminUsuarios :: adminUsuarios}"></div>
             </div>
             
-            <!-- Perfil -->
-            <div th:if="${vista == 'adminPerfil'}">
-                <div th:replace="~{fragments/adminPerfil :: adminPerfil}"></div>
-            </div>
-
         </main>
         
     </div>
