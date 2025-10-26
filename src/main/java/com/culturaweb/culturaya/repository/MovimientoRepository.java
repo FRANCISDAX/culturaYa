@@ -11,5 +11,6 @@ import com.culturaweb.culturaya.model.entity.Movimiento;
 public interface MovimientoRepository extends JpaRepository<Movimiento, Long>{
 
     List<Movimiento> findTop5ByOrderByFechaDesc();
+    Movimiento findFirstByOrderByFechaAsc();
     
 }

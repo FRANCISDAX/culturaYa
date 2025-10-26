@@ -49,7 +49,6 @@ public class UsuarioController {
                           BindingResult result,
                           Model model) {
         if (result.hasErrors()) {
-            log.warn("Errores de validación en el formulario: {}", result.getAllErrors());
             model.addAttribute("usuarios", usuarioService.listarUsuarios());
             model.addAttribute("vista", "adminUsuarios");
             model.addAttribute("error", "Por favor, corrige los errores del formulario.");
@@ -60,7 +59,6 @@ public class UsuarioController {
             usuarioService.guardarUsuario(usuario);
             return "redirect:/admin/usuarios?exito=Usuario registrado correctamente";
         } catch (Exception e) {
-            log.error("❌ Error inesperado al guardar usuario: {}", e.getMessage(), e);
             return "redirect:/admin/usuarios?error=No se pudo registrar el usuario";
         }
     }

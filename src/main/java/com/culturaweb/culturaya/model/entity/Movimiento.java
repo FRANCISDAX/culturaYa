@@ -26,17 +26,19 @@ public class Movimiento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String entidad;     // Ejemplo: "Noticia", "Actividad", "Servicio"
-    private String accion;      // Ejemplo: "Creado", "Actualizado", "Eliminado"
-    private String descripcion; // Opcional, algo como "Se actualizó la noticia: Cultura 2025"
+    private String entidad;
+    private String accion;
+    private String descripcion;
+    private String usuario;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecha;
 
-    public Movimiento(String entidad, String accion, String descripcion) {
+    public Movimiento(String entidad, String accion, String descripcion, String usuario) {
         this.entidad = entidad;
         this.accion = accion;
         this.descripcion = descripcion;
+        this.usuario = usuario;
         this.fecha = new Date();
     }
     
