@@ -46,6 +46,20 @@
             </div>
 
         </div>
+
+        <!-- Paginación -->
+        <div class="paginacion" style="text-align: center; margin-top: 20px;">
+            <a th:if="${paginaActualNoticias > 0}" 
+            th:href="@{/(pageNoticias=${paginaActualNoticias - 1}, size=3)}"
+            style="margin-right: 15px;">&#171; Anterior</a>
+
+            <span>Página <span th:text="${paginaActualNoticias + 1}"></span> de <span th:text="${totalPaginasNoticias}"></span></span>
+
+            <a th:if="${paginaActualNoticias + 1 < totalPaginasNoticias}" 
+            th:href="@{/(pageNoticias=${paginaActualNoticias + 1}, size=3)}"
+            style="margin-left: 15px;">Siguiente &#187;</a>
+        </div>
+        
     </article>
 
     <article class="articulos">
@@ -75,6 +89,19 @@
 
         </div>
 
+        <!-- Paginación -->
+        <div class="paginacion" style="text-align: center; margin-top: 20px;">
+            <a th:if="${paginaActualEventos > 0}" 
+            th:href="@{/(pageEventos=${paginaActualEventos - 1}, size=3)}"
+            style="margin-right: 15px;">&#171; Anterior</a>
+
+            <span>Página <span th:text="${paginaActualEventos + 1}"></span> de <span th:text="${totalPaginasEventos}"></span></span>
+
+            <a th:if="${paginaActualEventos + 1 < totalPaginasEventos}" 
+            th:href="@{/(pageEventos=${paginaActualEventos + 1}, size=3)}"
+            style="margin-left: 15px;">Siguiente &#187;</a>
+        </div>
+
     </article>
 
     <article class="articulos">
@@ -101,10 +128,74 @@
 
         </div>
 
+        <!-- Paginación -->
+        <div class="paginacion" style="text-align: center; margin-top: 20px;">
+            <a th:if="${paginaActualServicios > 0}" 
+            th:href="@{/(pageServicios=${paginaActualServicios - 1}, size=3)}"
+            style="margin-right: 15px;">&#171; Anterior</a>
+
+            <span>Página <span th:text="${paginaActualServicios + 1}"></span> de <span th:text="${totalPaginasServicios}"></span></span>
+
+            <a th:if="${paginaActualServicios + 1 < totalPaginasServicios}" 
+            th:href="@{/(pageServicios=${paginaActualServicios + 1}, size=3)}"
+            style="margin-left: 15px;">Siguiente &#187;</a>
+        </div>
+
     </article>
 
     <!-- Footer -->
     <div th:replace="~{fragments/footer :: footer}"></div>
 
+    <style>
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .pagination li {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination a, .pagination span {
+            font-family: 'Poppins', sans-serif;
+            color: #6a0dad;
+            font-weight: 500;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #dcdcdc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #6a0dad;
+            color: white;
+            border-color: #6a0dad;
+        }
+
+        .pagination li.active span {
+            background-color: #6a0dad;
+            color: white;
+            font-weight: 600;
+            border-color: #6a0dad;
+        }
+
+        .pagination li.disabled span {
+            color: #aaa;
+            border-color: #eee;
+            cursor: not-allowed;
+        }
+    </style>
+    
 </body>
 </html>

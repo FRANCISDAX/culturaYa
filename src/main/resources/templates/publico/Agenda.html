@@ -49,6 +49,19 @@
 
         </div>
 
+        <!-- Paginación -->
+        <div class="paginacion" style="text-align: center; margin-top: 20px;">
+            <a th:if="${paginaActualConciertos > 0}" 
+            th:href="@{/(pageConciertos=${paginaActualConciertos - 1}, size=3)}"
+            style="margin-right: 15px;">&#171; Anterior</a>
+
+            <span>Página <span th:text="${paginaActualConciertos + 1}"></span> de <span th:text="${totalPaginasConciertos}"></span></span>
+
+            <a th:if="${paginaActualConciertos + 1 < totalPaginasConciertos}" 
+            th:href="@{/(pageConciertos=${paginaActualConciertos + 1}, size=3)}"
+            style="margin-left: 15px;">Siguiente &#187;</a>
+        </div>
+
         <h1>Teatro</h1>
 
         <div th:if="${teatros == null or teatros.isEmpty()}" class="sin-noticias">
@@ -72,6 +85,19 @@
 
             </div>
 
+        </div>
+
+        <!-- Paginación -->
+        <div class="paginacion" style="text-align: center; margin-top: 20px;">
+            <a th:if="${paginaActualTeatro > 0}" 
+            th:href="@{/(pageTeatro=${paginaActualTeatro - 1}, size=3)}"
+            style="margin-right: 15px;">&#171; Anterior</a>
+
+            <span>Página <span th:text="${paginaActualTeatro + 1}"></span> de <span th:text="${totalPaginasTeatro}"></span></span>
+
+            <a th:if="${paginaActualTeatro + 1 < totalPaginasTeatro}" 
+            th:href="@{/(pageTeatro=${paginaActualTeatro + 1}, size=3)}"
+            style="margin-left: 15px;">Siguiente &#187;</a>
         </div>
 
         <h1>Ferias</h1>
@@ -99,6 +125,21 @@
 
         </div>
 
+        <!-- Paginación -->
+        <div class="paginacion" style="text-align: center; margin-top: 20px;">
+            <a th:if="${paginaActualFerias > 0}" 
+            th:href="@{/(pageFerias=${paginaActualFerias - 1}, size=3)}"
+            style="margin-right: 15px;">&#171; Anterior</a>
+
+            <span>Página <span th:text="${paginaActualFerias + 1}"></span> de <span th:text="${totalPaginasFerias}"></span></span>
+
+            <a th:if="${paginaActualFerias + 1 < totalPaginasFerias}" 
+            th:href="@{/(pageFerias=${paginaActualFerias + 1}, size=3)}"
+            style="margin-left: 15px;">Siguiente &#187;</a>
+        </div>
+
+        <br>
+
     </article>
 
     <!-- Footer -->
@@ -107,5 +148,56 @@
     <!-- Script -->
     <script th:src="@{/js/script.js}"></script>
 
+    <style>
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .pagination li {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination a, .pagination span {
+            font-family: 'Poppins', sans-serif;
+            color: #6a0dad;
+            font-weight: 500;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #dcdcdc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #6a0dad;
+            color: white;
+            border-color: #6a0dad;
+        }
+
+        .pagination li.active span {
+            background-color: #6a0dad;
+            color: white;
+            font-weight: 600;
+            border-color: #6a0dad;
+        }
+
+        .pagination li.disabled span {
+            color: #aaa;
+            border-color: #eee;
+            cursor: not-allowed;
+        }
+    </style>
+    
 </body>
 </html>

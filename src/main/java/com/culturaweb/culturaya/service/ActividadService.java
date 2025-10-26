@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.culturaweb.culturaya.model.entity.Actividad;
@@ -76,6 +78,22 @@ public class ActividadService {
         } else {
             return actividadRepository.findByUsuarioId(usuario.getId());
         }
+    }
+
+    public Page<Actividad> listarEventosPaginable(Pageable pageable) {
+        return actividadRepository.findByCategoria(Categoria.EVENTOS, pageable);
+    }
+
+    public Page<Actividad> listarConciertosPaginable(Pageable pageable) {
+        return actividadRepository.findByCategoria(Categoria.CONCIERTOS, pageable);
+    }
+
+    public Page<Actividad> listarTeatroPaginable(Pageable pageable) {
+        return actividadRepository.findByCategoria(Categoria.TEATRO, pageable);
+    }
+
+    public Page<Actividad> listarFeriasPaginable(Pageable pageable) {
+        return actividadRepository.findByCategoria(Categoria.FERIAS, pageable);
     }
 
 }
