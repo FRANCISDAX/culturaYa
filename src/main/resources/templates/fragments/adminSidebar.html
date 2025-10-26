@@ -36,7 +36,7 @@
                         <span class="nav-text">Servicios</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                     <a class="nav-link" th:classappend="${vista == 'adminUsuarios'} ? 'active'" th:href="@{/admin/usuarios}" onclick="handleNavClick()">
                         <i class="bi bi-people"></i>
                         <span class="nav-text">Usuarios</span>
