@@ -44,7 +44,7 @@ public class PublicoController {
         model.addAttribute("paginaActualEventos", eventos.getNumber());
         model.addAttribute("totalPaginasEventos", eventos.getTotalPages());
 
-        Page<Servicio> servicios = servicioService.listarServiciosPaginable(PageRequest.of(pageNoticias, 3));
+        Page<Servicio> servicios = servicioService.listarServiciosPaginable(PageRequest.of(pageServicios, 3));
         model.addAttribute("servicios", servicios.getContent());
         model.addAttribute("paginaActualServicios", servicios.getNumber());
         model.addAttribute("totalPaginasServicios", servicios.getTotalPages());
