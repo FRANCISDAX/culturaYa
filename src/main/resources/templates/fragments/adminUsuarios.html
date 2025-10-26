@@ -49,16 +49,21 @@
 
             <!-- Tarjeta de usuario -->
             <div class="col-12 col-md-6 col-lg-4" th:each="usuario : ${usuarios}">
-                <div class="card card-user h-100">
+                <div class="card card-user h-100 shadom-sm">
                     <div class="row g-0 align-items-center p-3">
                         <div class="col-3 text-center">
                             <img th:src="'https://ui-avatars.com/api/?name=' + ${usuario.nombre} + '&background=' + (${usuario.rol}=='ADMIN' ? '0d6efd' : '6c757d') + '&color=fff'"
                                  alt="Avatar"
-                                 class="avatar">
+                                 class="avatar img-fluid rounded-circle">
                         </div>
-                        <div class="col-9">
-                            <h5 class="fw-bold mb-1" th:text="${usuario.nombre}">Nombre Usuario</h5>
+                        <div class="col-9 ps-3">
+                            <h6 class="fw-bold mb-1" th:text="${usuario.nombre}">Nombre Usuario</h6>
                             <p class="text-muted mb-1" th:text="${usuario.email}">email@example.com</p>
+                            <span class="badge"
+                                th:classappend="${usuario.estado} ? ' bg-success' : ' bg-danger'"
+                                th:text="${usuario.estado} ? 'Activo' : 'Inactivo'">
+                                Estado
+                            </span>
                             <span th:text="${usuario.rol}"
                                   th:classappend="${#strings.toUpperCase(usuario.rol)} == 'ADMIN' ? 'badge bg-primary badge-role' : 'badge bg-secondary badge-role'">
                                 ROL
@@ -97,7 +102,7 @@
             <div class="modal-body">
                 <div class="mb-3">
                     <label for="nombre" class="form-label fw-semibold">Nombre completo</label>
-                    <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej. Juan Pérez" required>
+                    <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej. Juan Pérez" required minlength="3" maxlength="50">
                     <div class="invalid-feedback">El nombre es obligatorio.</div>
                 </div>
 
@@ -126,6 +131,16 @@
                     </select>
                     <div class="invalid-feedback">Seleccione un rol.</div>
                 </div>
+
+                <div class="mb-3">
+                    <label for="estado" class="form-label fw-semibold d-block">Estado</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="estado" name="estado" th:field="*{estado}" checked>
+                        <label class="form-check-label" for="estado">Activo</label>
+                    </div>
+                    <div class="form-text text-muted">Desactiva este interruptor si deseas inhabilitar al usuario.</div>
+                </div>
+
             </div>
 
             <div class="modal-footer d-flex justify-content-end gap-2">
@@ -182,6 +197,10 @@
                     document.getElementById('email').value = usuario.email;
                     document.getElementById('rol').value = usuario.rol;
                     document.getElementById('password').value = "********";
+                    const estadoCheckbox = document.getElementById('estado');
+                    estadoCheckbox.checked = usuario.estado === true;
+                    const labelEstado = document.querySelector('label[for="estado"]');
+                    labelEstado.textContent = usuario.estado ? 'Activo' : 'Inactivo';
                     document.getElementById('email').setAttribute('readonly', 'readonly');
                     document.getElementById('password').setAttribute('readonly', 'readonly');
                     emailError.style.display = 'none';

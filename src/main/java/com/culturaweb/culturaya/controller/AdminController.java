@@ -34,11 +34,15 @@ public class AdminController {
     @GetMapping({"","/dashboard"})
     public String dashboard(Model model) {
         long totalUsuarios = usuarioService.contarUsuarios();
+        long totalUActivos = usuarioService.contarUsuariosActivos();
+        long totalUInactivos = usuarioService.contarUsuariosInactivos();
         long totalNoticias = noticiaService.contarNoticias();
         long totalActividades = actividadService.contarActividades();
         long totalServicios = servicioService.contarServicios();
 
         model.addAttribute("totalUsuarios", totalUsuarios);
+        model.addAttribute("usuariosActivos", totalUActivos);
+        model.addAttribute("usuariosInactivos", totalUInactivos);
         model.addAttribute("totalNoticias", totalNoticias);
         model.addAttribute("totalActividades", totalActividades);
         model.addAttribute("totalServicios", totalServicios);

@@ -14,13 +14,25 @@
 
     <!-- Estadísticas -->
     <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon bg-primary">
+            <div class="stat-card p-3 shadow-sm rounded-4 bg-white d-flex align-items-center gap-3">
+                <div class="stat-icon bg-primary text-white rounded-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
                     <i class="bi bi-people"></i>
                 </div>
-                <div class="stat-info">
-                    <div class="stat-value" th:text="${totalUsuarios ?: '1,248'}">0</div>
-                    <div class="stat-label">Usuarios totales</div>
+                <div class="flex-grow-1">
+                    <div class="stat-info d-flex align-items-center gap-2">
+                        <div class="stat-value" th:text="${totalUsuarios ?: '0'}">0</div>
+                        <div class="stat-label">Usuarios totales</div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2 small gap-3">
+                        <span class="text-success fw-semibold">
+                            <i class="bi bi-person-check me-1"></i>
+                            <span th:text="${usuariosActivos ?: 0}">0</span> activos
+                        </span>
+                        <span class="text-danger fw-semibold">
+                            <i class="bi bi-person-x me-1"></i>
+                            <span th:text="${usuariosInactivos ?: 0}">0</span> inactivos
+                        </span>
+                    </div>
                 </div>
             </div>
             
@@ -62,14 +74,14 @@
                     <h5 class="card-title h6 h5-md">Actividad Reciente</h5>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover text-center align-middle small" style="table-layout: fixed; width: 100%;">
+                    <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                        <table class="table table-hover text-center align-middle small text-nowrap¿">
                             <thead>
                                 <tr>
                                     <th>Usuario</th>
-                                    <th class="d-none d-md-table-cell">Entidad</th>
+                                    <th>Entidad</th>
                                     <th>Acción</th>
-                                    <th class="d-none d-sm-table-cell">Descripción</th>
+                                    <th>Descripción</th>
                                     <th>Fecha</th>
                                 </tr>
                             </thead>
@@ -130,6 +142,7 @@
                 </div>
             </div>
         </div>
+
     </div>
     
     <style>
@@ -148,6 +161,31 @@
             white-space: normal;
             max-height: 6em;
         }
+
+        .stat-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-icon {
+            min-width: 60px;
+            min-height: 60px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-sub {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
     </style>
 
 </div>

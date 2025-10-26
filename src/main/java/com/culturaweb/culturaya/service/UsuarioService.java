@@ -92,6 +92,17 @@ public class UsuarioService implements UserDetailsService{
         return usuarioRepository.count();
     }
 
+    // -------------------------------
+    // Contar usuarios activos e inactivos.
+    // -------------------------------
+    public long contarUsuariosActivos() {
+        return usuarioRepository.countByEstadoTrue();
+    }
+
+    public long contarUsuariosInactivos() {
+        return usuarioRepository.countByEstadoFalse();
+    }
+    
     // ------------------------------------------------------------
     // Autenticación: carga de usuario por email (Spring Security).
     // ------------------------------------------------------------
