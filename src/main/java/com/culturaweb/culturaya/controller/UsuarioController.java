@@ -56,7 +56,22 @@ public class UsuarioController {
         }
 
         try {
-            usuarioService.guardarUsuario(usuario);
+            if (usuario.getId() != null) {
+                Usuario existente = usuarioService.obtenerUsuarioPorId(usuario.getId());
+
+                if (usuario.getPassword() != null && !usuario.getPassword().isEmpty()) {
+                    existente.setPassword(usuario.getPassword());
+                }
+
+                existente.setNombre(usuario.getNombre());
+                existente.setEmail(usuario.getEmail());
+                existente.setRol(usuario.getRol());
+                existente.setEstado(usuario.isEstado());
+
+                usuarioService.guardarUsuario(existente);
+            } else {
+                usuarioService.guardarUsuario(usuario);
+            }
             return "redirect:/admin/usuarios?exito=Usuario registrado correctamente";
         } catch (Exception e) {
             return "redirect:/admin/usuarios?error=No se pudo registrar el usuario";
@@ -93,7 +108,7 @@ public class UsuarioController {
     }
 
     // ------------------------------------------------------------
-    // Buscar usuario por ID
+    // Buscar usuario por ID.
     // ------------------------------------------------------------
     @GetMapping("/buscar/{id}")
     @ResponseBody
@@ -101,6 +116,9 @@ public class UsuarioController {
         return usuarioService.obtenerUsuarioPorId(id);
     }
 
+    // ------------------------------------------------------------
+    // Buscar email existente.
+    // ------------------------------------------------------------
     @GetMapping("/existeEmail")
     @ResponseBody
     public boolean existeEmail(@RequestParam String email, @RequestParam(required = false) Long id) {

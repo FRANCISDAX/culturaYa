@@ -117,7 +117,7 @@
 
                 <div class="mb-3">
                     <label for="password" class="form-label fw-semibold">Contraseña</label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Mínimo 6 caracteres" minlength="6" required>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="******" minlength="6" required>
                     <div class="invalid-feedback">La contraseña es obligatoria (mínimo 6 caracteres).</div>
                 </div>
 
@@ -196,7 +196,7 @@
                     document.getElementById('nombre').value = usuario.nombre;
                     document.getElementById('email').value = usuario.email;
                     document.getElementById('rol').value = usuario.rol;
-                    document.getElementById('password').value = "********";
+                    document.getElementById('password').value = "";
                     const estadoCheckbox = document.getElementById('estado');
                     estadoCheckbox.checked = usuario.estado === true;
                     const labelEstado = document.querySelector('label[for="estado"]');
@@ -243,7 +243,7 @@
 
             if (!formUsuario.checkValidity() || emailError.style.display === 'block') {
                 formUsuario.classList.add('was-validated');
-                return; // no enviamos si hay errores
+                return;
             }
 
             btnGuardar.disabled = true;
@@ -252,6 +252,18 @@
                 ${document.getElementById('id').value ? 'Actualizando...' : 'Guardando...'}
             `;
             formUsuario.submit();
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const alerts = document.querySelectorAll('.auto-hide-alert');
+
+            alerts.forEach(alert => {
+                const delay = alert.dataset.autoHide || 3000;
+                setTimeout(() => {
+                    const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                    bsAlert.close();
+                }, delay);
+            });
         });
         
     </script>

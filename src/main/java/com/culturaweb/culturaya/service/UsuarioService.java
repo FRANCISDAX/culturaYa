@@ -121,4 +121,11 @@ public class UsuarioService implements UserDetailsService{
         return usuarioRepository.findByEmail(email).orElse(null);
     }
 
+    // -------------------------------
+    // Grabar perfil de usuario.
+    // -------------------------------
+    public void guardarPerfil(Usuario usuario) {
+        usuarioRepository.save(usuario);
+    }
+
 }

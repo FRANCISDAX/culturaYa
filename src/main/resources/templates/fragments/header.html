@@ -181,6 +181,10 @@
                         <div th:if="${param.error}" class="alert alert-danger py-2 text-center small">
                             <i class="fa fa-exclamation-triangle me-1"></i> Usuario o contraseña incorrectos.
                         </div>
+
+                        <div th:if="${param.inactive}" class="alert alert-warning py-2 text-center small">
+                            <i class="fa fa-user-slash me-1"></i> Tu cuenta está inactiva.
+                        </div>
                         
                     </div>
 
@@ -200,9 +204,12 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const hasError = window.location.search.includes("error=true");
-            const hasLogout = window.location.search.includes("logout=true");
-            if (hasError || hasLogout) {
+            //const hasError = window.location.search.includes("error=true");
+            //const hasLogout = window.location.search.includes("logout=true");
+            const hasError = window.location.search.includes("error");
+            const hasInactive = window.location.search.includes("inactive");
+            const hasLogout = window.location.search.includes("logout");
+            if (hasError || hasInactive) {
                 const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
                 loginModal.show();
             }
@@ -212,7 +219,6 @@
 
             if (loginForm && btnLogin) {
                 loginForm.addEventListener('submit', function(e) {
-                    // Validación rápida
                     if (!loginForm.checkValidity()) {
                         e.preventDefault();
                         loginForm.classList.add('was-validated');

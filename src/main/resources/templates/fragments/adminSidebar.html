@@ -48,22 +48,18 @@
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" th:classappend="${vista == 'adminImagenes'} ? 'active'" th:href="@{/admin/imagenes}" onclick="handleNavClick()">
-                        <i class="bi bi-images"></i>
-                        <span class="nav-text">Imágenes</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/admin/perfil}" onclick="handleNavClick()">
+                    <a class="nav-link" th:classappend="${vista == 'adminPerfil'} ? 'active'" th:href="@{/admin/perfil}" onclick="handleNavClick()">
                         <i class="bi bi-person-circle"></i>
                         <span class="nav-text">Perfil</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/" onclick="handleNavClick()">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span class="nav-text">Salir</span>
-                    </a>
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="nav-link w-100 text-start">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span class="nav-text">Cerrar Sesión</span>
+                        </button>
+                    </form>                
                 </li>
             </ul>
         </div>
